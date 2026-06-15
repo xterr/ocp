@@ -152,6 +152,7 @@ ocp create work --wrapper 'op run --no-masking --env-file={profile_dir}/secrets.
 | `ocp path <name>` | Print a profile's directories |
 | `ocp remove <name> [--purge-data]` | Remove a profile |
 | `ocp init-shell [flags]` | Print shell integration to `eval` |
+| `ocp self-update [version]` | Update `ocp` to the latest release (or a specific version) |
 
 `create` flags: `--from <dir>`, `--seed-auth`, `--env-file <file>`, `--wrapper <cmd>`, `--description <text>`,
 `--force`. Run `ocp <command> --help` for details.

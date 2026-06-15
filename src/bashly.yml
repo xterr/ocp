@@ -135,3 +135,16 @@ commands:
     help: Also emit <command>-<name> functions for every profile
   - long: --no-chpwd
     help: Skip the directory-change hook that tracks the active profile
+
+- name: self-update
+  help: Update the ocp binary to the latest release (or a specific version)
+  args:
+  - name: version
+    help: "Version to install (e.g. 1.2.0); defaults to the latest release"
+  flags:
+  - long: --force
+    short: -f
+    help: Reinstall even if already on the target version
+  examples:
+  - ocp self-update
+  - ocp self-update 1.0.0

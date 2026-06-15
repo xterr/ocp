@@ -13,6 +13,7 @@
 | [`path`](#path) | Print a profile's directories |
 | [`remove`](#remove) | Remove a profile |
 | [`init-shell`](#init-shell) | Print shell integration to `eval` |
+| [`self-update`](#self-update) | Update `ocp` to the latest release (or a specific version) |
 
 Run `ocp <command> --help` for the full flag list of any command.
 
@@ -110,3 +111,13 @@ ocp init-shell [--command <name>] [--per-profile-aliases] [--no-chpwd]
 ```
 
 Prints the shell integration to `eval` in your rc file.
+
+## self-update
+
+```sh
+ocp self-update [version] [--force]
+```
+
+Replaces the running `ocp` binary with a release from GitHub. With no argument it installs the latest release; pass a `version` (e.g. `1.0.0`) to pin or revert to a specific one. The download is syntax-checked before it atomically replaces the binary in place, so a failed or interrupted update never corrupts your install. `--force` reinstalls even when already on the target version.
+
+Updating to a version older than the one that introduced `self-update` will leave you without the command — reinstall via the [install script](/guide/getting-started#install) to recover.
