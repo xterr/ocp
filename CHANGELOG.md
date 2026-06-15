@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented here.
 
+## [1.4.0] - 2026-06-15
+
+### Features
+
+- Add versioned state migrations with auto-run
+
+### Documentation
+
+- Update changelog for 1.3.0
+
+### Miscellaneous
+
+- 1.4.0
+
 ## [1.3.0] - 2026-06-15
 
 ### Features
