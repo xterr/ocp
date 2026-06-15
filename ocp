@@ -32,7 +32,7 @@ ocp_usage() {
   printf "  %s   Debug resolution; print profile name and resolved paths\n" "$(green "resolve")   "
   printf "  %s   Set the global default profile\n" "$(green "use")       "
   printf "  %s   Resolve a profile and exec opencode with isolated env (core command)\n" "$(green "launch")    "
-  printf "  %s   Write a .ocprofile in a directory (like nvm writing .nvmrc)\n" "$(green "pin")       "
+  printf "  %s   Write a .ocprofile in a directory to pin a profile\n" "$(green "pin")       "
   printf "  %s   Open a profile's config dir or manifest\n" "$(green "edit")      "
   printf "  %s   Print resolved directories for a profile\n" "$(green "path")      "
   printf "  %s   Remove a profile\n" "$(green "remove")    "
@@ -295,7 +295,7 @@ ocp_launch_usage() {
 
 # :command.usage
 ocp_pin_usage() {
-  printf "ocp pin - Write a .ocprofile in a directory (like nvm writing .nvmrc)\n\n"
+  printf "ocp pin - Write a .ocprofile in a directory to pin a profile\n\n"
 
   printf "%s\n" "$(bold "Usage:")"
   printf "  ocp pin NAME [DIR]\n"

@@ -1,6 +1,6 @@
 # ocp — opencode profile manager
 
-> Run [opencode](https://opencode.ai) with isolated **profiles** — each with its own config, auth, sessions, and [oh-my-openagent](https://opencode.ai) (omo) setup. Switch by flag, by default, or **automatically per-directory** (like `nvm` + `.nvmrc`).
+> Run [opencode](https://opencode.ai) with isolated **profiles** — each with its own config, auth, sessions, and [oh-my-openagent](https://opencode.ai) (omo) setup. Switch by flag, by default, or **automatically per-directory**.
 
 `ocp` is a single, dependency-free Bash script generated with [bashly](https://bashly.dannyb.co/). It wires up nothing more than two environment variables that opencode already understands — so it is small, transparent, and easy to audit.
 
@@ -28,7 +28,6 @@
 - [Uninstall](#uninstall)
 - [Troubleshooting](#troubleshooting)
 - [Security notes](#security-notes)
-- [Credits](#credits)
 
 ---
 
@@ -186,7 +185,7 @@ eval "$(ocp init-shell --per-profile-aliases)"
 
 ## Per-directory auto-switching
 
-Like `nvm`'s `.nvmrc`, drop a `.ocprofile` file in a directory and `opencode` launched anywhere under it uses that profile:
+Drop a `.ocprofile` file in a directory and `opencode` launched anywhere under it uses that profile:
 
 ```sh
 cd ~/work/some-repo
@@ -460,13 +459,5 @@ rm -rf ~/.config/ocp                # remove ALL profiles, auth, and sessions (d
 ## Security notes
 
 - Each profile's `data/opencode/auth.json` holds real credentials. `ocp` creates seeded auth/env files with `chmod 600`; keep hand-created files the same and don't commit them.
-- The `env` file is **sourced as Bash** before launch. Treat it like `.bashrc`: only put trusted content there.
+- The `env` file is **sourced as Bash** before launch — only put trusted content there.
 - A `.ocprofile` cannot run code — it only names one of your existing profiles.
-
----
-
-## Credits
-
-- Built with [bashly](https://bashly.dannyb.co/) by Danny Ben Shitrit.
-- Inspired by the [opencode profile switcher gist](https://gist.github.com/locxter/82b613aef5909817b352f62ba9734726) and [OCX](https://ocx.kdco.dev/).
-- For [opencode](https://opencode.ai).

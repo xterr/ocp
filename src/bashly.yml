@@ -78,7 +78,7 @@ commands:
     help: Arguments passed straight through to opencode (place after --)
 
 - name: pin
-  help: Write a .ocprofile in a directory (like nvm writing .nvmrc)
+  help: Write a .ocprofile in a directory to pin a profile
   args:
   - name: name
     required: true
