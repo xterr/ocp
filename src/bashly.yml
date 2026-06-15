@@ -1,0 +1,140 @@
+name: ocp
+help: Manage isolated opencode profiles (config + auth + sessions + omo)
+version: 0.1.0
+
+environment_variables:
+- name: OCP_HOME
+  help: "Root dir for ocp data (default: ~/.config/ocp)"
+- name: OCP_PROFILE
+  help: Force a profile, overriding .ocprofile and the active default
+
+commands:
+- name: create
+  alias: new
+  help: Create a new self-contained profile
+  args:
+  - name: name
+    required: true
+    help: Profile name (letters, numbers, _ and - only)
+  flags:
+  - long: --from
+    arg: dir
+    help: Seed config/ by copying an existing opencode config dir
+  - long: --seed-auth
+    help: Copy the current shared ~/.local/share/opencode/auth.json into the profile
+  - long: --env-file
+    arg: file
+    help: Seed the profile's env file (dotenv KEY=VALUE) from this path
+  - long: --wrapper
+    arg: cmd
+    help: 'Command prefix to wrap opencode (e.g. "op run --env-file={profile_dir}/secrets.env --")'
+  - long: --description
+    arg: text
+    help: Human-readable description stored in the manifest
+  - long: --force
+    short: -f
+    help: Overwrite if the profile already exists
+  examples:
+  - ocp create personal
+  - ocp create work --from ~/.config/opencode --description "Work"
+
+- name: list
+  alias: ls
+  help: List profiles, marking the active default and the one resolved here
+
+- name: current
+  help: Print the profile that would be used in the current directory
+
+- name: resolve
+  help: Debug resolution; print profile name and resolved paths
+  args:
+  - name: dir
+    help: "Directory to resolve from (default: cwd)"
+  flags:
+  - long: --quiet
+    short: -q
+    help: Print only the profile name (for prompts/scripts)
+
+- name: use
+  alias: default
+  help: Set the global default profile
+  args:
+  - name: name
+    required: true
+    help: Profile to set as default
+
+- name: launch
+  alias: run
+  help: Resolve a profile and exec opencode with isolated env (core command)
+  flags:
+  - long: --profile
+    short: -p
+    arg: name
+    help: Profile to use (omit to auto-resolve via the chain)
+  - long: --print
+    help: Print the resolved env + command instead of executing
+  catch_all:
+    label: opencode args
+    help: Arguments passed straight through to opencode (place after --)
+
+- name: login
+  help: Run `opencode auth login` inside a profile (one-time per profile)
+  args:
+  - name: name
+    required: true
+    help: Profile to authenticate
+
+- name: pin
+  help: Write a .ocprofile in a directory (like nvm writing .nvmrc)
+  args:
+  - name: name
+    required: true
+    help: Profile name to pin
+  - name: dir
+    help: "Directory to pin (default: cwd)"
+
+- name: edit
+  help: Open a profile's config dir or manifest
+  args:
+  - name: name
+    required: true
+    help: Profile name
+  flags:
+  - long: --what
+    arg: target
+    default: config
+    allowed: [config, manifest, opencode-json, omo, env, data]
+    help: What to open
+
+- name: path
+  help: Print resolved directories for a profile
+  args:
+  - name: name
+    required: true
+    help: Profile name
+
+- name: remove
+  alias: rm
+  help: Remove a profile
+  args:
+  - name: name
+    required: true
+    help: Profile name
+  flags:
+  - long: --purge-data
+    help: Also delete the profile's data/ (auth + sessions). Destructive.
+  - long: --yes
+    short: -y
+    help: Skip confirmation
+
+- name: init-shell
+  help: Print zsh integration to eval in ~/.zshrc
+  flags:
+  - long: --command
+    arg: name
+    default: opencode
+    help: Name of the generated launcher function
+  - long: --per-profile-aliases
+    help: Also emit <command>-<name> functions for every profile
+  - long: --no-chpwd
+    help: Skip the chpwd prompt-update hook

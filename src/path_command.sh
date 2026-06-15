@@ -1,0 +1,6 @@
+name="${args[name]}"
+ocp_profile_exists "$name" || ocp_die "Profile '$name' does not exist."
+printf 'profile : %s\n' "$name"
+printf 'root    : %s\n' "$(ocp_profile_dir "$name")"
+printf 'config  : %s\n' "$(ocp_config_dir "$name")"
+printf 'data    : %s\n' "$(ocp_data_dir "$name")"
