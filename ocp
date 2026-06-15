@@ -2140,7 +2140,7 @@ ocp_init_shell_parse_requirements() {
 
 # :command.initialize
 initialize() {
-  declare -g version="1.0.0"
+  declare -g version="1.1.0"
   set -e
 
   # src/initialize.sh
