@@ -66,6 +66,24 @@ ocp_migrate_unlock() {
   rm -rf "$(ocp_home)/.migrate.lock" 2>/dev/null || true
 }
 
+# Copy the current state file aside before migrating, so a bad or unwanted
+# migration can be recovered. Named by source version and a timestamp
+# (e.g. ocp.json.v1.20260615T221530.bak) so repeated runs never clobber a backup.
+ocp_backup_state() {
+  local from="$1" src dst ts
+  if [ -f "$(ocp_config_file)" ]; then
+    src="$(ocp_config_file)"
+  elif [ -f "$(ocp_legacy_active_file)" ]; then
+    src="$(ocp_legacy_active_file)"
+  else
+    return 0
+  fi
+  ts="$(date +%Y%m%dT%H%M%S 2>/dev/null || date +%s 2>/dev/null || echo backup)"
+  dst="$(ocp_home)/$(basename "$src").v$from.$ts.bak"
+  cp "$src" "$dst" 2>/dev/null && printf '%s\n' "$dst"
+  return 0
+}
+
 # v0 -> v1: replace the plain-text `active` file with ocp.json.
 ocp_migration_1() {
   local name
@@ -78,7 +96,7 @@ ocp_migration_1() {
 }
 
 ocp_apply_migrations() {
-  local verbose="$1" from to v
+  local verbose="$1" from to v backup
   if ! from="$(ocp_state_version)"; then
     [ -n "$verbose" ] && ocp_info "No ocp state found; nothing to migrate."
     return 0
@@ -95,6 +113,15 @@ ocp_apply_migrations() {
   fi
 
   ocp_migrate_lock || { [ -n "$verbose" ] && ocp_warn "another migration is in progress; skipping."; return 0; }
+
+  backup="$(ocp_backup_state "$from")"
+  if [ -n "$backup" ]; then
+    if [ -n "$verbose" ]; then
+      ocp_info "  backed up state to $backup"
+    else
+      printf 'ocp: backed up state to %s\n' "$backup" >&2
+    fi
+  fi
 
   if [ -n "$verbose" ]; then
     ocp_info "Migrating ocp state: v$from -> v$to"

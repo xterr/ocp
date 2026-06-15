@@ -150,4 +150,7 @@ automatic — every `ocp` command (and the installer / `self-update`) runs pendi
 first — so you rarely need it by hand. The integer `version` field in `ocp.json` tracks what has
 been applied; the legacy plain-text `active` file is treated as version 0 and converted to
 `ocp.json`. `--check` prints the current and target versions without changing anything. A file from
-a newer ocp (version greater than this binary supports) is left untouched.
+a newer ocp (version greater than this binary supports) is left untouched. Before any migration
+runs, the current state file is copied aside with its source version and a timestamp (e.g.
+`ocp.json.v1.20260615T221530.bak` in `$OCP_HOME`) so a bad upgrade can be recovered and repeated
+upgrades never overwrite an earlier backup; these `.bak` files are safe to delete once you're happy.
