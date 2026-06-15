@@ -1,0 +1,112 @@
+# Commands
+
+| Command | Description |
+| --- | --- |
+| [`create`](#create) | Create a self-contained profile |
+| [`list`](#list) | List profiles; mark the default and the one active here |
+| [`current`](#current) | Print the profile active in this directory |
+| [`resolve`](#resolve) | Show the resolved profile, its source, and paths |
+| [`use`](#use) | Set the global default profile |
+| [`launch`](#launch) | Run opencode under a profile with isolated env |
+| [`pin`](#pin) | Write a `.ocprofile` |
+| [`edit`](#edit) | Open a profile's config, manifest, env, or data |
+| [`path`](#path) | Print a profile's directories |
+| [`remove`](#remove) | Remove a profile |
+| [`init-shell`](#init-shell) | Print shell integration to `eval` |
+
+Run `ocp <command> --help` for the full flag list of any command.
+
+## create
+
+```sh
+ocp create <name> [flags]
+```
+
+| Flag | Description |
+| --- | --- |
+| `--from <dir>` | Seed `config/` by copying an existing opencode config directory |
+| `--seed-auth` | Copy your current `~/.local/share/opencode/auth.json` into the profile |
+| `--env-file <file>` | Seed the profile's `env` file from a dotenv file |
+| `--wrapper <cmd>` | Command prefix to wrap opencode (supports `{profile_dir}`) |
+| `--description <text>` | Stored in the manifest, shown in `ocp list` |
+| `--force`, `-f` | Overwrite if the profile already exists |
+
+## list
+
+```sh
+ocp list
+```
+
+Lists profiles. `->` marks the profile active in the current directory; the `default ->` footer shows the global default.
+
+## current
+
+```sh
+ocp current
+```
+
+Prints the name of the profile that applies in the current directory, or `(none)`.
+
+## resolve
+
+```sh
+ocp resolve [dir]
+```
+
+Shows the resolved profile, the source of the decision (`flag`, `env:OCP_PROFILE`, `.ocprofile`, `active-default`, `none`), and the resolved `config`/`data` paths. `--quiet` prints only the name (used by the shell hook).
+
+## use
+
+```sh
+ocp use <name>
+```
+
+Sets the global default profile (written to `~/.config/ocp/active`).
+
+## launch
+
+```sh
+ocp launch [-p <name>] [--print] -- <opencode args>
+```
+
+Resolves a profile and execs opencode with the isolated environment. Everything after `--` is passed straight through. `--print` shows the resolved env and command without running it.
+
+## pin
+
+```sh
+ocp pin <name> [dir]
+```
+
+Writes a `.ocprofile` (defaults to the current directory) so opencode auto-selects the profile there.
+
+## edit
+
+```sh
+ocp edit <name> --what <target>
+```
+
+Targets: `config` (default), `manifest`, `opencode-json`, `omo`, `env`, `data`. Opens the target in `$VISUAL`/`$EDITOR`.
+
+## path
+
+```sh
+ocp path <name>
+```
+
+Prints the profile's `root`, `config`, and `data` directories.
+
+## remove
+
+```sh
+ocp remove <name> [--purge-data] [--yes]
+```
+
+Removes a profile. Refuses to delete a profile that has a `data/` directory unless `--purge-data` is given. `--yes` skips the confirmation prompt.
+
+## init-shell
+
+```sh
+ocp init-shell [--command <name>] [--per-profile-aliases] [--no-chpwd]
+```
+
+Prints the shell integration to `eval` in your rc file.

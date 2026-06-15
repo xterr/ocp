@@ -10,6 +10,8 @@
 <img alt="built with bashly" src="https://img.shields.io/badge/built%20with-bashly-1f6feb">
 <img alt="single file" src="https://img.shields.io/badge/single--file-yes-3FB950">
 
+<p><a href="https://xterr.github.io/ocp/"><b>Documentation</b></a> · <a href="https://github.com/xterr/ocp/releases"><b>Releases</b></a></p>
+
 </div>
 
 ---
@@ -41,8 +43,9 @@ Pass a profile name (defaults to `default`):
 curl -fsSL https://raw.githubusercontent.com/xterr/ocp/main/install.sh | bash -s -- work
 ```
 
-The installer drops `ocp` into `~/.local/bin`, creates the profile, sets it as the default, and adds the
-shell integration to your rc file. Use `--no-shell` to skip the rc change.
+The installer downloads `ocp` from the latest [release](https://github.com/xterr/ocp/releases) into
+`~/.local/bin`, creates the profile, sets it as the default, and adds the shell integration to your rc
+file. Use `--no-shell` to skip the rc change, or `--version <x.y.z>` to pin a specific release.
 
 <details>
 <summary>Manual install</summary>
@@ -165,6 +168,25 @@ bashly generate --env production # slimmer release build
 
 Never hand-edit the generated `ocp`. Help-text colors live in `settings.yml`; runtime color follows your
 terminal and the [`NO_COLOR`](https://no-color.org) standard.
+
+## Releasing
+
+`src/bashly.yml`'s `version:` field is the single source of truth. To cut a release:
+
+```sh
+# 1. bump `version:` in src/bashly.yml, then regenerate and commit
+bashly generate
+git commit -am "release 1.2.3"
+
+# 2. tag with the exact version (no v prefix) and push the tag
+git tag 1.2.3
+git push origin main 1.2.3
+```
+
+Pushing the tag triggers [`release.yml`](.github/workflows/release.yml): it verifies the tag matches
+`src/bashly.yml`, builds the production `ocp` with bashly, and publishes a GitHub Release with `ocp`
+attached. The docs site redeploys to GitHub Pages automatically on every push to `main` that touches
+`docs/`.
 
 ## Uninstall
 
