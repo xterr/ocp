@@ -121,8 +121,12 @@ commands:
     help: Skip confirmation
 
 - name: init-shell
-  help: Print zsh integration to eval in ~/.zshrc
+  help: Print shell integration to load in your shell rc
   flags:
+  - long: --shell
+    arg: name
+    allowed: [zsh, bash, fish, posix]
+    help: "Target shell (default: auto-detect from $SHELL)"
   - long: --command
     arg: name
     default: opencode
@@ -130,4 +134,4 @@ commands:
   - long: --per-profile-aliases
     help: Also emit <command>-<name> functions for every profile
   - long: --no-chpwd
-    help: Skip the chpwd prompt-update hook
+    help: Skip the directory-change hook that tracks the active profile

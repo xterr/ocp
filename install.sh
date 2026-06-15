@@ -95,14 +95,6 @@ find_bash4() {
   return 1
 }
 
-detect_rc() {
-  case "$(basename "${SHELL:-}")" in
-    zsh) printf '%s\n' "$HOME/.zshrc" ;;
-    bash) [ "$(uname)" = Darwin ] && printf '%s\n' "$HOME/.bash_profile" || printf '%s\n' "$HOME/.bashrc" ;;
-    *) printf '\n' ;;
-  esac
-}
-
 printf '%socp installer%s\n' "$B" "$X"
 
 mkdir -p "$BIN_DIR" || die "cannot create $BIN_DIR"
@@ -129,13 +121,32 @@ else
 fi
 
 if [ "$DO_SHELL" = 1 ]; then
-  rc="$(detect_rc)"
+  shell_name="$(basename "${SHELL:-}")"
+  rc=""
+  case "$shell_name" in
+    zsh)
+      rc="$HOME/.zshrc"
+      path_line="export PATH=\"$BIN_DIR:\$PATH\""
+      init_line="eval \"\$(ocp init-shell --shell zsh)\""
+      ;;
+    bash)
+      if [ "$(uname)" = Darwin ]; then rc="$HOME/.bash_profile"; else rc="$HOME/.bashrc"; fi
+      path_line="export PATH=\"$BIN_DIR:\$PATH\""
+      init_line="eval \"\$(ocp init-shell --shell bash)\""
+      ;;
+    fish)
+      rc="$HOME/.config/fish/config.fish"
+      mkdir -p "$(dirname "$rc")"
+      path_line="fish_add_path $BIN_DIR"
+      init_line="ocp init-shell --shell fish | source"
+      ;;
+  esac
   if [ -z "$rc" ]; then
-    warn "could not detect your shell rc; add this line manually:  eval \"\$(ocp init-shell)\""
+    warn "unrecognized shell '${shell_name:-unknown}'; add the ocp integration to your shell rc manually (see the README)"
   elif grep -q 'ocp init-shell' "$rc" 2>/dev/null; then
     ok "shell integration already present in $rc"
   else
-    printf '\n# ocp\nexport PATH="%s:$PATH"\neval "$(ocp init-shell)"\n' "$BIN_DIR" >>"$rc"
+    printf '\n# ocp\n%s\n%s\n' "$path_line" "$init_line" >>"$rc"
     ok "added shell integration to $rc"
   fi
 fi
