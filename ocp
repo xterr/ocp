@@ -553,6 +553,54 @@ inspect_args() {
 }
 
 # :command.user_lib
+# src/lib/colors.sh
+enable_auto_colors() {
+  if [[ -z ${NO_COLOR+x} && ! -t 1 ]]; then
+    NO_COLOR=1
+  fi
+}
+
+print_in_color() {
+  local color="$1"
+  shift
+  if [[ "${NO_COLOR:-}" == "" ]]; then
+    printf "$color%b\e[0m\n" "$*"
+  else
+    printf "%b\n" "$*"
+  fi
+}
+
+red() { print_in_color "\e[31m" "$*"; }
+green() { print_in_color "\e[32m" "$*"; }
+yellow() { print_in_color "\e[33m" "$*"; }
+blue() { print_in_color "\e[34m" "$*"; }
+magenta() { print_in_color "\e[35m" "$*"; }
+cyan() { print_in_color "\e[36m" "$*"; }
+black() { print_in_color "\e[30m" "$*"; }
+white() { print_in_color "\e[37m" "$*"; }
+
+bold() { print_in_color "\e[1m" "$*"; }
+underlined() { print_in_color "\e[4m" "$*"; }
+bold_underlined() { print_in_color "\e[1;4m" "$*"; }
+
+red_bold() { print_in_color "\e[1;31m" "$*"; }
+green_bold() { print_in_color "\e[1;32m" "$*"; }
+yellow_bold() { print_in_color "\e[1;33m" "$*"; }
+blue_bold() { print_in_color "\e[1;34m" "$*"; }
+magenta_bold() { print_in_color "\e[1;35m" "$*"; }
+cyan_bold() { print_in_color "\e[1;36m" "$*"; }
+black_bold() { print_in_color "\e[1;30m" "$*"; }
+white_bold() { print_in_color "\e[1;37m" "$*"; }
+
+red_underlined() { print_in_color "\e[4;31m" "$*"; }
+green_underlined() { print_in_color "\e[4;32m" "$*"; }
+yellow_underlined() { print_in_color "\e[4;33m" "$*"; }
+blue_underlined() { print_in_color "\e[4;34m" "$*"; }
+magenta_underlined() { print_in_color "\e[4;35m" "$*"; }
+cyan_underlined() { print_in_color "\e[4;36m" "$*"; }
+black_underlined() { print_in_color "\e[4;30m" "$*"; }
+white_underlined() { print_in_color "\e[4;37m" "$*"; }
+
 # src/lib/manifest.sh
 
 # Quote a value for safe sourcing
@@ -717,7 +765,7 @@ ocp_resolve_source() {
 # src/lib/validate.sh
 
 ocp_die() {
-  printf 'Error: %s\n' "$1" >&2
+  red "Error: $1" >&2
   exit 1
 }
 
@@ -725,8 +773,12 @@ ocp_info() {
   printf '%s\n' "$1"
 }
 
+ocp_success() {
+  green "$1"
+}
+
 ocp_warn() {
-  printf 'Warning: %s\n' "$1" >&2
+  yellow "Warning: $1" >&2
 }
 
 ocp_validate_name() {
@@ -788,7 +840,7 @@ ocp_create_command() {
 
   ocp_write_manifest "$name" "${args[--description]:-}" "${args[--wrapper]:-}" ""
 
-  ocp_info "Created profile '$name' at $pdir"
+  ocp_success "Created profile '$name' at $pdir"
   if [ -z "$seeded_auth" ]; then
     ocp_info "Next: run 'ocp launch -p $name -- auth login' to authenticate this profile."
   fi
@@ -806,8 +858,8 @@ ocp_list_command() {
     exit 0
   fi
 
-  active=""
-  ocp_active_profile >/dev/null && active="$(ocp_active_profile)"
+  default=""
+  ocp_active_profile >/dev/null && default="$(ocp_active_profile)"
   resolved="$(ocp_resolve_profile "" "$PWD" 2>/dev/null || true)"
 
   found=0
@@ -815,20 +867,24 @@ ocp_list_command() {
     [ -d "$d" ] || continue
     found=1
     n="$(basename "$d")"
-    marks=""
-    [ "$n" = "$active" ] && marks="$marks default"
-    [ "$n" = "$resolved" ] && marks="$marks here"
     ocp_load_manifest "$n"
     desc=""
-    [ -n "$DESCRIPTION" ] && desc=" - $DESCRIPTION"
-    if [ -n "$marks" ]; then
-      printf '  %s [%s]%s\n' "$n" "${marks# }" "$desc"
+    [ -n "$DESCRIPTION" ] && desc="  $(cyan "$DESCRIPTION")"
+    if [ "$n" = "$resolved" ]; then
+      printf '%s %s%s\n' "$(green_bold "->")" "$(green_bold "$n")" "$desc"
     else
-      printf '  %s%s\n' "$n" "$desc"
+      printf '   %s%s\n' "$n" "$desc"
     fi
   done
 
-  [ "$found" = 0 ] && ocp_info "No profiles yet. Create one with: ocp create <name>"
+  if [ "$found" = 0 ]; then
+    ocp_info "No profiles yet. Create one with: ocp create <name>"
+    exit 0
+  fi
+
+  if [ -n "$default" ]; then
+    printf '\n%s %s\n' "$(cyan "default ->")" "$(cyan "$default")"
+  fi
 
 }
 
@@ -838,9 +894,9 @@ ocp_current_command() {
   # src/current_command.sh
   p="$(ocp_resolve_profile "" "$PWD" 2>/dev/null || true)"
   if [ -z "$p" ]; then
-    ocp_info "(none) - opencode would run without a profile"
+    ocp_info "$(yellow "(none)") - opencode would run without a profile"
   else
-    ocp_info "$p"
+    green_bold "$p"
   fi
 
 }
@@ -862,15 +918,15 @@ ocp_resolve_command() {
   src="$(ocp_resolve_source "" "$dir")"
 
   if [ -z "$p" ]; then
-    ocp_info "profile : (none)"
-    ocp_info "source  : $src"
+    printf 'profile : %s\n' "$(yellow "(none)")"
+    printf 'source  : %s\n' "$(cyan "$src")"
     exit 0
   fi
 
-  ocp_info "profile : $p"
-  ocp_info "source  : $src"
-  ocp_info "config  : $(ocp_config_dir "$p")"
-  ocp_info "data    : $(ocp_data_dir "$p")"
+  printf 'profile : %s\n' "$(green_bold "$p")"
+  printf 'source  : %s\n' "$(cyan "$src")"
+  printf 'config  : %s\n' "$(ocp_config_dir "$p")"
+  printf 'data    : %s\n' "$(ocp_data_dir "$p")"
   if ! ocp_profile_exists "$p"; then
     ocp_warn "profile '$p' is selected but does not exist (create it with: ocp create $p)"
   fi
@@ -886,7 +942,7 @@ ocp_use_command() {
   ocp_profile_exists "$name" || ocp_die "Profile '$name' does not exist."
   mkdir -p "$(ocp_home)" || ocp_die "Failed to create $(ocp_home)"
   printf '%s\n' "$name" >"$(ocp_active_file)" || ocp_die "Failed to write active file."
-  ocp_info "Default profile set to '$name'."
+  ocp_success "Default profile set to '$name'."
 
 }
 
@@ -969,7 +1025,7 @@ ocp_pin_command() {
   ocp_profile_exists "$name" || ocp_warn "Profile '$name' does not exist yet (create it with: ocp create $name)."
 
   printf '%s\n' "$name" >"$dir/.ocprofile" || ocp_die "Failed to write .ocprofile"
-  ocp_info "Pinned '$name' in $dir/.ocprofile"
+  ocp_success "Pinned '$name' in $dir/.ocprofile"
 
 }
 
@@ -1042,7 +1098,7 @@ ocp_remove_command() {
   fi
 
   rm -rf "$pdir" || ocp_die "Failed to remove $pdir"
-  ocp_info "Removed profile '$name'."
+  ocp_success "Removed profile '$name'."
 
   active=""
   ocp_active_profile >/dev/null && active="$(ocp_active_profile)"
@@ -2016,6 +2072,9 @@ ocp_init_shell_parse_requirements() {
 initialize() {
   declare -g version="0.1.0"
   set -e
+
+  # src/initialize.sh
+  enable_auto_colors
 
 }
 

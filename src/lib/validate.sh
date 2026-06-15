@@ -1,7 +1,7 @@
 ## Output + validation helpers for ocp
 
 ocp_die() {
-  printf 'Error: %s\n' "$1" >&2
+  red "Error: $1" >&2
   exit 1
 }
 
@@ -9,8 +9,12 @@ ocp_info() {
   printf '%s\n' "$1"
 }
 
+ocp_success() {
+  green "$1"
+}
+
 ocp_warn() {
-  printf 'Warning: %s\n' "$1" >&2
+  yellow "Warning: $1" >&2
 }
 
 ocp_validate_name() {

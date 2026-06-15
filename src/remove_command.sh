@@ -21,7 +21,7 @@ if [ -z "${args[--yes]}" ]; then
 fi
 
 rm -rf "$pdir" || ocp_die "Failed to remove $pdir"
-ocp_info "Removed profile '$name'."
+ocp_success "Removed profile '$name'."
 
 active=""
 ocp_active_profile >/dev/null && active="$(ocp_active_profile)"

@@ -8,4 +8,4 @@ dir="$(ocp_expand "$dir")"
 ocp_profile_exists "$name" || ocp_warn "Profile '$name' does not exist yet (create it with: ocp create $name)."
 
 printf '%s\n' "$name" >"$dir/.ocprofile" || ocp_die "Failed to write .ocprofile"
-ocp_info "Pinned '$name' in $dir/.ocprofile"
+ocp_success "Pinned '$name' in $dir/.ocprofile"

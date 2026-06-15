@@ -11,15 +11,15 @@ fi
 src="$(ocp_resolve_source "" "$dir")"
 
 if [ -z "$p" ]; then
-  ocp_info "profile : (none)"
-  ocp_info "source  : $src"
+  printf 'profile : %s\n' "$(yellow "(none)")"
+  printf 'source  : %s\n' "$(cyan "$src")"
   exit 0
 fi
 
-ocp_info "profile : $p"
-ocp_info "source  : $src"
-ocp_info "config  : $(ocp_config_dir "$p")"
-ocp_info "data    : $(ocp_data_dir "$p")"
+printf 'profile : %s\n' "$(green_bold "$p")"
+printf 'source  : %s\n' "$(cyan "$src")"
+printf 'config  : %s\n' "$(ocp_config_dir "$p")"
+printf 'data    : %s\n' "$(ocp_data_dir "$p")"
 if ! ocp_profile_exists "$p"; then
   ocp_warn "profile '$p' is selected but does not exist (create it with: ocp create $p)"
 fi
