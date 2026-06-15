@@ -29,6 +29,9 @@ automatically based on the directory you're in. Think **`direnv` for opencode**.
 - 📁 **Auto-switched per directory** — drop a `.ocprofile` in a repo and you're on the right account.
 - 🪶 **Zero dependencies** — one Bash script, no daemon, no config format to learn.
 
+Without `ocp`, this means manually exporting `OPENCODE_CONFIG_DIR` / `XDG_DATA_HOME` for every project
+and remembering to reset them — one slip and you've cross-contaminated accounts or sessions.
+
 `ocp` lets you run opencode under named **profiles** — *work*, *personal*, *client* — each with its own
 authentication, session history, and configuration (`opencode.json`, agents, skills, plugins, and your
 `oh-my-openagent.json`). Pick a profile explicitly, set a global default, or let it switch **automatically**
@@ -63,6 +66,8 @@ right rc file. Use `--no-shell` to skip the rc change, or `--version <x.y.z>` to
 **Works with zsh, bash, and fish.** `ocp` itself is a Bash script, so it needs **Bash ≥ 4 installed as its
 interpreter** (macOS ships 3.2 — `brew install bash`) — but *not* as your login shell. The installer
 detects your shell and adds the matching integration.
+
+Update anytime with `ocp self-update` (or `ocp self-update <x.y.z>` to pin a version).
 
 <details>
 <summary>Manual install</summary>
