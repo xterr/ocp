@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented here.
 
+## [1.3.0] - 2026-06-15
+
+### Features
+
+- Add ocp rename and JSON-backed profile state
+
+### Documentation
+
+- Update changelog for 1.2.0
+
+### Miscellaneous
+
+- 1.3.0
+
 ## [1.2.0] - 2026-06-15
 
 ### Features
