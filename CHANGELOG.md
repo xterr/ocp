@@ -2,6 +2,25 @@
 
 All notable changes to this project are documented here.
 
+## [1.4.1] - 2026-06-15
+
+### Features
+
+- Back up ocp.json before migrating (timestamped)
+
+### Bug Fixes
+
+- Refuse to overwrite newer ocp.json schema on downgrade
+
+### Documentation
+
+- Update changelog for 1.4.0
+- Surface self-update and the manual-setup pain in the readme
+
+### Miscellaneous
+
+- 1.4.1
+
 ## [1.4.0] - 2026-06-15
 
 ### Features
