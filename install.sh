@@ -2,15 +2,18 @@
 #
 # ocp installer
 #
-#   curl -fsSL <raw-url>/install.sh | bash
-#   curl -fsSL <raw-url>/install.sh | bash -s -- <profile-name>
+#   curl -fsSL https://raw.githubusercontent.com/xterr/ocp/main/install.sh | bash
+#   curl -fsSL .../install.sh | bash -s -- <profile-name>
+#   curl -fsSL .../install.sh | bash -s -- work --version 1.2.3
 #
-# Options (after `--`): [profile-name] [--no-shell] [--bin-dir DIR] [--url URL]
-# Env overrides: OCP_SRC_URL, OCP_BIN_DIR
+# Args (after --): [profile-name] [--version TAG] [--no-shell] [--bin-dir DIR] [--url URL]
+# Env overrides:   OCP_VERSION, OCP_REPO, OCP_BIN_DIR, OCP_SRC_URL
 #
 set -eu
 
-OCP_SRC_URL="${OCP_SRC_URL:-https://raw.githubusercontent.com/xterr/ocp/main/ocp}"
+REPO="${OCP_REPO:-xterr/ocp}"
+OCP_SRC_URL="${OCP_SRC_URL:-}"
+OCP_VERSION="${OCP_VERSION:-}"
 BIN_DIR="${OCP_BIN_DIR:-$HOME/.local/bin}"
 PROFILE="default"
 DO_SHELL=1
@@ -20,17 +23,22 @@ while [ $# -gt 0 ]; do
     --no-shell) DO_SHELL=0 ;;
     --bin-dir) shift; BIN_DIR="$1" ;;
     --bin-dir=*) BIN_DIR="${1#*=}" ;;
+    --version) shift; OCP_VERSION="$1" ;;
+    --version=*) OCP_VERSION="${1#*=}" ;;
     --url) shift; OCP_SRC_URL="$1" ;;
     --url=*) OCP_SRC_URL="${1#*=}" ;;
     -h | --help)
       cat <<'EOF'
 ocp installer
 
-  curl -fsSL <raw-url>/install.sh | bash
-  curl -fsSL <raw-url>/install.sh | bash -s -- <profile-name>
+  curl -fsSL https://raw.githubusercontent.com/xterr/ocp/main/install.sh | bash
+  curl -fsSL .../install.sh | bash -s -- <profile-name>
+  curl -fsSL .../install.sh | bash -s -- work --version 1.2.3
 
-Options (after --): [profile-name] [--no-shell] [--bin-dir DIR] [--url URL]
-Env overrides:      OCP_SRC_URL, OCP_BIN_DIR
+Args (after --): [profile-name] [--version TAG] [--no-shell] [--bin-dir DIR] [--url URL]
+Env overrides:   OCP_VERSION, OCP_REPO, OCP_BIN_DIR, OCP_SRC_URL
+
+By default the latest GitHub release asset is installed.
 EOF
       exit 0
       ;;
@@ -39,6 +47,15 @@ EOF
   esac
   shift
 done
+
+if [ -z "$OCP_SRC_URL" ]; then
+  if [ -n "$OCP_VERSION" ]; then
+    tag="${OCP_VERSION#v}"
+    OCP_SRC_URL="https://github.com/$REPO/releases/download/$tag/ocp"
+  else
+    OCP_SRC_URL="https://github.com/$REPO/releases/latest/download/ocp"
+  fi
+fi
 
 if [ -t 1 ]; then
   G=$'\033[1;32m'; Y=$'\033[1;33m'; R=$'\033[1;31m'; B=$'\033[1m'; X=$'\033[0m'
