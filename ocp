@@ -19,49 +19,49 @@ version_command() {
 ocp_usage() {
   printf "ocp - Manage isolated opencode profiles (config + auth + sessions + omo)\n\n"
 
-  printf "%s\n" "Usage:"
+  printf "%s\n" "$(bold "Usage:")"
   printf "  ocp COMMAND\n"
   printf "  ocp [COMMAND] --help | -h\n"
   printf "  ocp --version | -v\n"
   echo
   # :command.usage_commands
-  printf "%s\n" "Commands:"
-  printf "  %s   Create a new self-contained profile\n" "create    "
-  printf "  %s   List profiles, marking the active default and the one resolved here\n" "list      "
-  printf "  %s   Print the profile that would be used in the current directory\n" "current   "
-  printf "  %s   Debug resolution; print profile name and resolved paths\n" "resolve   "
-  printf "  %s   Set the global default profile\n" "use       "
-  printf "  %s   Resolve a profile and exec opencode with isolated env (core command)\n" "launch    "
-  printf "  %s   Write a .ocprofile in a directory (like nvm writing .nvmrc)\n" "pin       "
-  printf "  %s   Open a profile's config dir or manifest\n" "edit      "
-  printf "  %s   Print resolved directories for a profile\n" "path      "
-  printf "  %s   Remove a profile\n" "remove    "
-  printf "  %s   Print zsh integration to eval in ~/.zshrc\n" "init-shell"
+  printf "%s\n" "$(bold "Commands:")"
+  printf "  %s   Create a new self-contained profile\n" "$(green "create")    "
+  printf "  %s   List profiles, marking the active default and the one resolved here\n" "$(green "list")      "
+  printf "  %s   Print the profile that would be used in the current directory\n" "$(green "current")   "
+  printf "  %s   Debug resolution; print profile name and resolved paths\n" "$(green "resolve")   "
+  printf "  %s   Set the global default profile\n" "$(green "use")       "
+  printf "  %s   Resolve a profile and exec opencode with isolated env (core command)\n" "$(green "launch")    "
+  printf "  %s   Write a .ocprofile in a directory (like nvm writing .nvmrc)\n" "$(green "pin")       "
+  printf "  %s   Open a profile's config dir or manifest\n" "$(green "edit")      "
+  printf "  %s   Print resolved directories for a profile\n" "$(green "path")      "
+  printf "  %s   Remove a profile\n" "$(green "remove")    "
+  printf "  %s   Print zsh integration to eval in ~/.zshrc\n" "$(green "init-shell")"
   echo
 
   # :command.long_usage
   if [[ -n "$long_usage" ]]; then
     # :command.usage_options
-    printf "%s\n" "Options:"
+    printf "%s\n" "$(bold "Options:")"
 
     # :command.usage_fixed_flags
-    printf "  %s\n" "--help, -h"
+    printf "  %s\n" "$(yellow "--help, -h")"
     printf "    Show this help\n"
     echo
-    printf "  %s\n" "--version, -v"
+    printf "  %s\n" "$(yellow "--version, -v")"
     printf "    Show version number\n"
     echo
 
     # :command.usage_environment_variables
-    printf "%s\n" "Environment Variables:"
+    printf "%s\n" "$(bold "Environment Variables:")"
 
     # :environment_variable.usage
-    printf "  %s\n" "OCP_HOME"
+    printf "  %s\n" "$(magenta "OCP_HOME")"
     printf "    Root dir for ocp data (default: ~/.config/ocp)\n"
     echo
 
     # :environment_variable.usage
-    printf "  %s\n" "OCP_PROFILE"
+    printf "  %s\n" "$(magenta "OCP_PROFILE")"
     printf "    Force a profile, overriding .ocprofile and the active default\n"
     echo
 
@@ -74,7 +74,7 @@ ocp_create_usage() {
   printf "Alias: new\n"
   echo
 
-  printf "%s\n" "Usage:"
+  printf "%s\n" "$(bold "Usage:")"
   printf "  ocp create NAME [OPTIONS]\n"
   printf "  ocp create --help | -h\n"
   echo
@@ -82,54 +82,54 @@ ocp_create_usage() {
   # :command.long_usage
   if [[ -n "$long_usage" ]]; then
     # :command.usage_options
-    printf "%s\n" "Options:"
+    printf "%s\n" "$(bold "Options:")"
 
     # :command.usage_flags
     # :flag.usage
-    printf "  %s\n" "--from DIR"
+    printf "  %s\n" "$(yellow "--from DIR")"
     printf "    Seed config/ by copying an existing opencode config dir\n"
     echo
 
     # :flag.usage
-    printf "  %s\n" "--seed-auth"
+    printf "  %s\n" "$(yellow "--seed-auth")"
     printf "    Copy the current shared ~/.local/share/opencode/auth.json into the profile\n"
     echo
 
     # :flag.usage
-    printf "  %s\n" "--env-file FILE"
+    printf "  %s\n" "$(yellow "--env-file FILE")"
     printf "    Seed the profile's env file (dotenv KEY=VALUE) from this path\n"
     echo
 
     # :flag.usage
-    printf "  %s\n" "--wrapper CMD"
+    printf "  %s\n" "$(yellow "--wrapper CMD")"
     printf "    Command prefix to wrap opencode (e.g. \"op run\n    --env-file={profile_dir}/secrets.env --\")\n"
     echo
 
     # :flag.usage
-    printf "  %s\n" "--description TEXT"
+    printf "  %s\n" "$(yellow "--description TEXT")"
     printf "    Human-readable description stored in the manifest\n"
     echo
 
     # :flag.usage
-    printf "  %s\n" "--force, -f"
+    printf "  %s\n" "$(yellow "--force, -f")"
     printf "    Overwrite if the profile already exists\n"
     echo
 
     # :command.usage_fixed_flags
-    printf "  %s\n" "--help, -h"
+    printf "  %s\n" "$(yellow "--help, -h")"
     printf "    Show this help\n"
     echo
 
     # :command.usage_args
-    printf "%s\n" "Arguments:"
+    printf "%s\n" "$(bold "Arguments:")"
 
     # :argument.usage
-    printf "  %s\n" "NAME"
+    printf "  %s\n" "$(cyan "NAME")"
     printf "    Profile name (letters, numbers, _ and - only)\n"
     echo
 
     # :command.usage_examples
-    printf "%s\n" "Examples:"
+    printf "%s\n" "$(bold "Examples:")"
     printf "  ocp create personal\n"
     printf "  ocp create work --from ~/.config/opencode --description \"Work\"\n"
     echo
@@ -143,7 +143,7 @@ ocp_list_usage() {
   printf "Alias: ls\n"
   echo
 
-  printf "%s\n" "Usage:"
+  printf "%s\n" "$(bold "Usage:")"
   printf "  ocp list\n"
   printf "  ocp list --help | -h\n"
   echo
@@ -151,10 +151,10 @@ ocp_list_usage() {
   # :command.long_usage
   if [[ -n "$long_usage" ]]; then
     # :command.usage_options
-    printf "%s\n" "Options:"
+    printf "%s\n" "$(bold "Options:")"
 
     # :command.usage_fixed_flags
-    printf "  %s\n" "--help, -h"
+    printf "  %s\n" "$(yellow "--help, -h")"
     printf "    Show this help\n"
     echo
 
@@ -165,7 +165,7 @@ ocp_list_usage() {
 ocp_current_usage() {
   printf "ocp current - Print the profile that would be used in the current directory\n\n"
 
-  printf "%s\n" "Usage:"
+  printf "%s\n" "$(bold "Usage:")"
   printf "  ocp current\n"
   printf "  ocp current --help | -h\n"
   echo
@@ -173,10 +173,10 @@ ocp_current_usage() {
   # :command.long_usage
   if [[ -n "$long_usage" ]]; then
     # :command.usage_options
-    printf "%s\n" "Options:"
+    printf "%s\n" "$(bold "Options:")"
 
     # :command.usage_fixed_flags
-    printf "  %s\n" "--help, -h"
+    printf "  %s\n" "$(yellow "--help, -h")"
     printf "    Show this help\n"
     echo
 
@@ -187,7 +187,7 @@ ocp_current_usage() {
 ocp_resolve_usage() {
   printf "ocp resolve - Debug resolution; print profile name and resolved paths\n\n"
 
-  printf "%s\n" "Usage:"
+  printf "%s\n" "$(bold "Usage:")"
   printf "  ocp resolve [DIR] [OPTIONS]\n"
   printf "  ocp resolve --help | -h\n"
   echo
@@ -195,24 +195,24 @@ ocp_resolve_usage() {
   # :command.long_usage
   if [[ -n "$long_usage" ]]; then
     # :command.usage_options
-    printf "%s\n" "Options:"
+    printf "%s\n" "$(bold "Options:")"
 
     # :command.usage_flags
     # :flag.usage
-    printf "  %s\n" "--quiet, -q"
+    printf "  %s\n" "$(yellow "--quiet, -q")"
     printf "    Print only the profile name (for prompts/scripts)\n"
     echo
 
     # :command.usage_fixed_flags
-    printf "  %s\n" "--help, -h"
+    printf "  %s\n" "$(yellow "--help, -h")"
     printf "    Show this help\n"
     echo
 
     # :command.usage_args
-    printf "%s\n" "Arguments:"
+    printf "%s\n" "$(bold "Arguments:")"
 
     # :argument.usage
-    printf "  %s\n" "DIR"
+    printf "  %s\n" "$(cyan "DIR")"
     printf "    Directory to resolve from (default: cwd)\n"
     echo
 
@@ -225,7 +225,7 @@ ocp_use_usage() {
   printf "Alias: default\n"
   echo
 
-  printf "%s\n" "Usage:"
+  printf "%s\n" "$(bold "Usage:")"
   printf "  ocp use NAME\n"
   printf "  ocp use --help | -h\n"
   echo
@@ -233,18 +233,18 @@ ocp_use_usage() {
   # :command.long_usage
   if [[ -n "$long_usage" ]]; then
     # :command.usage_options
-    printf "%s\n" "Options:"
+    printf "%s\n" "$(bold "Options:")"
 
     # :command.usage_fixed_flags
-    printf "  %s\n" "--help, -h"
+    printf "  %s\n" "$(yellow "--help, -h")"
     printf "    Show this help\n"
     echo
 
     # :command.usage_args
-    printf "%s\n" "Arguments:"
+    printf "%s\n" "$(bold "Arguments:")"
 
     # :argument.usage
-    printf "  %s\n" "NAME"
+    printf "  %s\n" "$(cyan "NAME")"
     printf "    Profile to set as default\n"
     echo
 
@@ -257,7 +257,7 @@ ocp_launch_usage() {
   printf "Alias: run\n"
   echo
 
-  printf "%s\n" "Usage:"
+  printf "%s\n" "$(bold "Usage:")"
   printf "  ocp launch [OPTIONS] [--] [OPENCODE ARGS...]\n"
   printf "  ocp launch --help | -h\n"
   echo
@@ -265,26 +265,26 @@ ocp_launch_usage() {
   # :command.long_usage
   if [[ -n "$long_usage" ]]; then
     # :command.usage_options
-    printf "%s\n" "Options:"
+    printf "%s\n" "$(bold "Options:")"
 
     # :command.usage_flags
     # :flag.usage
-    printf "  %s\n" "--profile, -p NAME"
+    printf "  %s\n" "$(yellow "--profile, -p NAME")"
     printf "    Profile to use (omit to auto-resolve via the chain)\n"
     echo
 
     # :flag.usage
-    printf "  %s\n" "--print"
+    printf "  %s\n" "$(yellow "--print")"
     printf "    Print the resolved env + command instead of executing\n"
     echo
 
     # :command.usage_fixed_flags
-    printf "  %s\n" "--help, -h"
+    printf "  %s\n" "$(yellow "--help, -h")"
     printf "    Show this help\n"
     echo
 
     # :command.usage_args
-    printf "%s\n" "Arguments:"
+    printf "%s\n" "$(bold "Arguments:")"
 
     echo "  OPENCODE ARGS..."
     printf "    Arguments passed straight through to opencode (place after --)\n"
@@ -297,7 +297,7 @@ ocp_launch_usage() {
 ocp_pin_usage() {
   printf "ocp pin - Write a .ocprofile in a directory (like nvm writing .nvmrc)\n\n"
 
-  printf "%s\n" "Usage:"
+  printf "%s\n" "$(bold "Usage:")"
   printf "  ocp pin NAME [DIR]\n"
   printf "  ocp pin --help | -h\n"
   echo
@@ -305,23 +305,23 @@ ocp_pin_usage() {
   # :command.long_usage
   if [[ -n "$long_usage" ]]; then
     # :command.usage_options
-    printf "%s\n" "Options:"
+    printf "%s\n" "$(bold "Options:")"
 
     # :command.usage_fixed_flags
-    printf "  %s\n" "--help, -h"
+    printf "  %s\n" "$(yellow "--help, -h")"
     printf "    Show this help\n"
     echo
 
     # :command.usage_args
-    printf "%s\n" "Arguments:"
+    printf "%s\n" "$(bold "Arguments:")"
 
     # :argument.usage
-    printf "  %s\n" "NAME"
+    printf "  %s\n" "$(cyan "NAME")"
     printf "    Profile name to pin\n"
     echo
 
     # :argument.usage
-    printf "  %s\n" "DIR"
+    printf "  %s\n" "$(cyan "DIR")"
     printf "    Directory to pin (default: cwd)\n"
     echo
 
@@ -332,7 +332,7 @@ ocp_pin_usage() {
 ocp_edit_usage() {
   printf "ocp edit - Open a profile's config dir or manifest\n\n"
 
-  printf "%s\n" "Usage:"
+  printf "%s\n" "$(bold "Usage:")"
   printf "  ocp edit NAME [OPTIONS]\n"
   printf "  ocp edit --help | -h\n"
   echo
@@ -340,26 +340,26 @@ ocp_edit_usage() {
   # :command.long_usage
   if [[ -n "$long_usage" ]]; then
     # :command.usage_options
-    printf "%s\n" "Options:"
+    printf "%s\n" "$(bold "Options:")"
 
     # :command.usage_flags
     # :flag.usage
-    printf "  %s\n" "--what TARGET"
+    printf "  %s\n" "$(yellow "--what TARGET")"
     printf "    What to open\n"
     printf "    %s\n" "Allowed: config, manifest, opencode-json, omo, env, data"
     printf "    %s\n" "Default: config"
     echo
 
     # :command.usage_fixed_flags
-    printf "  %s\n" "--help, -h"
+    printf "  %s\n" "$(yellow "--help, -h")"
     printf "    Show this help\n"
     echo
 
     # :command.usage_args
-    printf "%s\n" "Arguments:"
+    printf "%s\n" "$(bold "Arguments:")"
 
     # :argument.usage
-    printf "  %s\n" "NAME"
+    printf "  %s\n" "$(cyan "NAME")"
     printf "    Profile name\n"
     echo
 
@@ -370,7 +370,7 @@ ocp_edit_usage() {
 ocp_path_usage() {
   printf "ocp path - Print resolved directories for a profile\n\n"
 
-  printf "%s\n" "Usage:"
+  printf "%s\n" "$(bold "Usage:")"
   printf "  ocp path NAME\n"
   printf "  ocp path --help | -h\n"
   echo
@@ -378,18 +378,18 @@ ocp_path_usage() {
   # :command.long_usage
   if [[ -n "$long_usage" ]]; then
     # :command.usage_options
-    printf "%s\n" "Options:"
+    printf "%s\n" "$(bold "Options:")"
 
     # :command.usage_fixed_flags
-    printf "  %s\n" "--help, -h"
+    printf "  %s\n" "$(yellow "--help, -h")"
     printf "    Show this help\n"
     echo
 
     # :command.usage_args
-    printf "%s\n" "Arguments:"
+    printf "%s\n" "$(bold "Arguments:")"
 
     # :argument.usage
-    printf "  %s\n" "NAME"
+    printf "  %s\n" "$(cyan "NAME")"
     printf "    Profile name\n"
     echo
 
@@ -402,7 +402,7 @@ ocp_remove_usage() {
   printf "Alias: rm\n"
   echo
 
-  printf "%s\n" "Usage:"
+  printf "%s\n" "$(bold "Usage:")"
   printf "  ocp remove NAME [OPTIONS]\n"
   printf "  ocp remove --help | -h\n"
   echo
@@ -410,29 +410,29 @@ ocp_remove_usage() {
   # :command.long_usage
   if [[ -n "$long_usage" ]]; then
     # :command.usage_options
-    printf "%s\n" "Options:"
+    printf "%s\n" "$(bold "Options:")"
 
     # :command.usage_flags
     # :flag.usage
-    printf "  %s\n" "--purge-data"
+    printf "  %s\n" "$(yellow "--purge-data")"
     printf "    Also delete the profile's data/ (auth + sessions). Destructive.\n"
     echo
 
     # :flag.usage
-    printf "  %s\n" "--yes, -y"
+    printf "  %s\n" "$(yellow "--yes, -y")"
     printf "    Skip confirmation\n"
     echo
 
     # :command.usage_fixed_flags
-    printf "  %s\n" "--help, -h"
+    printf "  %s\n" "$(yellow "--help, -h")"
     printf "    Show this help\n"
     echo
 
     # :command.usage_args
-    printf "%s\n" "Arguments:"
+    printf "%s\n" "$(bold "Arguments:")"
 
     # :argument.usage
-    printf "  %s\n" "NAME"
+    printf "  %s\n" "$(cyan "NAME")"
     printf "    Profile name\n"
     echo
 
@@ -443,7 +443,7 @@ ocp_remove_usage() {
 ocp_init_shell_usage() {
   printf "ocp init-shell - Print zsh integration to eval in ~/.zshrc\n\n"
 
-  printf "%s\n" "Usage:"
+  printf "%s\n" "$(bold "Usage:")"
   printf "  ocp init-shell [OPTIONS]\n"
   printf "  ocp init-shell --help | -h\n"
   echo
@@ -451,27 +451,27 @@ ocp_init_shell_usage() {
   # :command.long_usage
   if [[ -n "$long_usage" ]]; then
     # :command.usage_options
-    printf "%s\n" "Options:"
+    printf "%s\n" "$(bold "Options:")"
 
     # :command.usage_flags
     # :flag.usage
-    printf "  %s\n" "--command NAME"
+    printf "  %s\n" "$(yellow "--command NAME")"
     printf "    Name of the generated launcher function\n"
     printf "    %s\n" "Default: opencode"
     echo
 
     # :flag.usage
-    printf "  %s\n" "--per-profile-aliases"
+    printf "  %s\n" "$(yellow "--per-profile-aliases")"
     printf "    Also emit <command>-<name> functions for every profile\n"
     echo
 
     # :flag.usage
-    printf "  %s\n" "--no-chpwd"
+    printf "  %s\n" "$(yellow "--no-chpwd")"
     printf "    Skip the chpwd prompt-update hook\n"
     echo
 
     # :command.usage_fixed_flags
-    printf "  %s\n" "--help, -h"
+    printf "  %s\n" "$(yellow "--help, -h")"
     printf "    Show this help\n"
     echo
 

@@ -414,7 +414,11 @@ DEFAULT_ARGS=""                # extra args always prepended to opencode
 
 `ocp` compiles to a **single self-contained Bash file** — that's the whole point of bashly. To share it:
 
-1. Build it: `bashly generate` (Docker or gem — see [Install](#install)).
+1. Build the slimmer **production** variant (strips dev-only helpers like `inspect_args` and view markers):
+   ```sh
+   docker run --rm --user "$(id -u):$(id -g)" --volume "$PWD:/app" dannyben/bashly generate --env production
+   # or, with the gem:  bashly generate --env production
+   ```
 2. Ship the resulting `./ocp` file. Recipients only need Bash ≥ 4 and opencode; **bashly is not required to run it**.
 
 Common channels:
@@ -427,7 +431,7 @@ install -m755 ocp ~/.local/bin/ocp
 curl -fsSL https://example.com/ocp -o ~/.local/bin/ocp && chmod +x ~/.local/bin/ocp
 ```
 
-To change anything, edit files under `src/` and re-run `bashly generate`; never hand-edit the generated `ocp`.
+To change anything, edit files under `src/` and re-run `bashly generate`; never hand-edit the generated `ocp`. Help-text colors are configured in `settings.yml` (`usage_colors`); runtime color follows your terminal and the [`NO_COLOR`](https://no-color.org) standard.
 
 ---
 
