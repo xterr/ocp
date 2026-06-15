@@ -32,10 +32,13 @@ ocp_json_get_string() {
 }
 
 ocp_write_config() {
-  local f def schema
+  local f def schema existing
   f="$(ocp_config_file)"
   def="$1"
   schema="https://xterr.github.io/ocp/ocp.schema.json"
+  if existing="$(ocp_json_get_number "$f" version)" && [ "$existing" -gt "$OCP_SCHEMA_VERSION" ] 2>/dev/null; then
+    ocp_die "ocp.json is schema v$existing but this ocp only supports v$OCP_SCHEMA_VERSION; update ocp instead of overwriting newer state."
+  fi
   mkdir -p "$(ocp_home)" || ocp_die "Failed to create $(ocp_home)"
   if [ -n "$def" ]; then
     printf '{\n  "$schema": "%s",\n  "version": %s,\n  "defaultProfile": "%s"\n}\n' "$schema" "$OCP_SCHEMA_VERSION" "$def" >"$f" || ocp_die "Failed to write $f"
