@@ -34,8 +34,10 @@ site) and a `version` so the format can evolve:
 }
 ```
 
-Earlier versions used a plain-text `active` file; it is migrated to `ocp.json` automatically the next
-time the default changes.
+Earlier versions used a plain-text `active` file. It is migrated to `ocp.json` automatically: every
+`ocp` command (and the installer / `self-update`) runs any pending migrations first, tracked by the
+`version` integer. You can also run it explicitly with [`ocp migrate`](/reference/commands#migrate)
+(or `ocp migrate --check` to just inspect versions).
 
 ## Manifest — `profile.env`
 

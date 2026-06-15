@@ -161,3 +161,12 @@ commands:
   examples:
   - ocp self-update
   - ocp self-update 1.0.0
+
+- name: migrate
+  help: Migrate ocp's on-disk state to the current schema version
+  flags:
+  - long: --check
+    help: Report current and target schema versions without changing anything
+  examples:
+  - ocp migrate
+  - ocp migrate --check

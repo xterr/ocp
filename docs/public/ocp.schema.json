@@ -13,8 +13,8 @@
     },
     "version": {
       "type": "integer",
-      "const": 1,
-      "description": "Schema version of this file."
+      "minimum": 1,
+      "description": "Schema version of this file. ocp migrates older versions forward automatically."
     },
     "defaultProfile": {
       "type": "string",

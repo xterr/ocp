@@ -1,1 +1,2 @@
 enable_auto_colors
+ocp_migrate_auto

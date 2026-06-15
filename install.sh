@@ -119,6 +119,7 @@ any_profiles() {
 
 auth_hint="$PROFILE"
 if bash4="$(find_bash4)"; then
+  "$bash4" "$BIN_DIR/ocp" migrate >/dev/null 2>&1 || true
   if "$bash4" "$BIN_DIR/ocp" path "$PROFILE" >/dev/null 2>&1; then
     ok "profile '$PROFILE' already exists"
   elif [ "$PROFILE_EXPLICIT" = 1 ]; then

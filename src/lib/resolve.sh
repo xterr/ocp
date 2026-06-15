@@ -38,9 +38,9 @@ ocp_write_config() {
   schema="https://xterr.github.io/ocp/ocp.schema.json"
   mkdir -p "$(ocp_home)" || ocp_die "Failed to create $(ocp_home)"
   if [ -n "$def" ]; then
-    printf '{\n  "$schema": "%s",\n  "version": 1,\n  "defaultProfile": "%s"\n}\n' "$schema" "$def" >"$f" || ocp_die "Failed to write $f"
+    printf '{\n  "$schema": "%s",\n  "version": %s,\n  "defaultProfile": "%s"\n}\n' "$schema" "$OCP_SCHEMA_VERSION" "$def" >"$f" || ocp_die "Failed to write $f"
   else
-    printf '{\n  "$schema": "%s",\n  "version": 1\n}\n' "$schema" >"$f" || ocp_die "Failed to write $f"
+    printf '{\n  "$schema": "%s",\n  "version": %s\n}\n' "$schema" "$OCP_SCHEMA_VERSION" >"$f" || ocp_die "Failed to write $f"
   fi
 }
 

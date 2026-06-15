@@ -51,3 +51,5 @@ mv "$tmp" "$self" || ocp_die "failed to replace $self"
 trap - EXIT
 
 ocp_success "Updated ocp ${cur_ver:-?} -> ${new_ver:-$label}  ($self)"
+
+"$self" migrate >/dev/null 2>&1 || true

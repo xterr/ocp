@@ -15,6 +15,7 @@
 | [`remove`](#remove) | Remove a profile |
 | [`init-shell`](#init-shell) | Print shell integration to `eval` |
 | [`self-update`](#self-update) | Update `ocp` to the latest release (or a specific version) |
+| [`migrate`](#migrate) | Migrate on-disk state to the current schema version |
 
 Run `ocp <command> --help` for the full flag list of any command.
 
@@ -137,3 +138,16 @@ ocp self-update [version] [--force]
 Replaces the running `ocp` binary with a release from GitHub. With no argument it installs the latest release; pass a `version` (e.g. `1.0.0`) to pin or revert to a specific one. The download is syntax-checked before it atomically replaces the binary in place, so a failed or interrupted update never corrupts your install. `--force` reinstalls even when already on the target version.
 
 Updating to a version older than the one that introduced `self-update` will leave you without the command — reinstall via the [install script](/guide/getting-started#install) to recover.
+
+## migrate
+
+```sh
+ocp migrate [--check]
+```
+
+Upgrades ocp's on-disk state under `$OCP_HOME` to the current schema version. This is normally
+automatic — every `ocp` command (and the installer / `self-update`) runs pending migrations
+first — so you rarely need it by hand. The integer `version` field in `ocp.json` tracks what has
+been applied; the legacy plain-text `active` file is treated as version 0 and converted to
+`ocp.json`. `--check` prints the current and target versions without changing anything. A file from
+a newer ocp (version greater than this binary supports) is left untouched.

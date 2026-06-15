@@ -170,6 +170,7 @@ ocp create work --wrapper 'op run --no-masking --env-file={profile_dir}/secrets.
 | `ocp remove <name> [--purge-data]` | Remove a profile |
 | `ocp init-shell [flags]` | Print shell integration to `eval` |
 | `ocp self-update [version]` | Update `ocp` to the latest release (or a specific version) |
+| `ocp migrate [--check]` | Migrate on-disk state to the current schema version (usually automatic) |
 
 `create` flags: `--from <dir>`, `--seed-auth`, `--env-file <file>`, `--wrapper <cmd>`, `--description <text>`,
 `--force`. Run `ocp <command> --help` for details.
