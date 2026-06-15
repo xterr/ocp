@@ -6,7 +6,7 @@
 
 **Isolated [opencode](https://opencode.ai) profiles — config, auth, sessions, and omo, switched per directory.**
 
-<img alt="bash >= 4.0" src="https://img.shields.io/badge/bash-%E2%89%A5%204.0-4EAA25?logo=gnubash&logoColor=white">
+<img alt="bash 4.0+" src="https://img.shields.io/badge/bash-%E2%89%A5%204.0-4EAA25?logo=gnubash&logoColor=white">
 <img alt="built with bashly" src="https://img.shields.io/badge/built%20with-bashly-1f6feb">
 <img alt="single file" src="https://img.shields.io/badge/single--file-yes-3FB950">
 <img alt="license MIT" src="https://img.shields.io/badge/license-MIT-blue">
