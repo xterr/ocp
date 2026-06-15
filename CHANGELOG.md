@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented here.
 
+## [1.2.0] - 2026-06-15
+
+### Features
+
+- Add self-update command to install latest or a specific release
+
+### Documentation
+
+- Update changelog for 1.1.1
+
+### Miscellaneous
+
+- 1.2.0
+
 ## [1.1.1] - 2026-06-15
 
 ### Bug Fixes
