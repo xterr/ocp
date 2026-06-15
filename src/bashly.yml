@@ -77,13 +77,6 @@ commands:
     label: opencode args
     help: Arguments passed straight through to opencode (place after --)
 
-- name: login
-  help: Run `opencode auth login` inside a profile (one-time per profile)
-  args:
-  - name: name
-    required: true
-    help: Profile to authenticate
-
 - name: pin
   help: Write a .ocprofile in a directory (like nvm writing .nvmrc)
   args:

@@ -32,7 +32,6 @@ ocp_usage() {
   printf "  %s   Debug resolution; print profile name and resolved paths\n" "resolve   "
   printf "  %s   Set the global default profile\n" "use       "
   printf "  %s   Resolve a profile and exec opencode with isolated env (core command)\n" "launch    "
-  printf "  %s   Run \`opencode auth login\` inside a profile (one-time per profile)\n" "login     "
   printf "  %s   Write a .ocprofile in a directory (like nvm writing .nvmrc)\n" "pin       "
   printf "  %s   Open a profile's config dir or manifest\n" "edit      "
   printf "  %s   Print resolved directories for a profile\n" "path      "
@@ -289,36 +288,6 @@ ocp_launch_usage() {
 
     echo "  OPENCODE ARGS..."
     printf "    Arguments passed straight through to opencode (place after --)\n"
-    echo
-
-  fi
-}
-
-# :command.usage
-ocp_login_usage() {
-  printf "ocp login - Run \`opencode auth login\` inside a profile (one-time per profile)\n\n"
-
-  printf "%s\n" "Usage:"
-  printf "  ocp login NAME\n"
-  printf "  ocp login --help | -h\n"
-  echo
-
-  # :command.long_usage
-  if [[ -n "$long_usage" ]]; then
-    # :command.usage_options
-    printf "%s\n" "Options:"
-
-    # :command.usage_fixed_flags
-    printf "  %s\n" "--help, -h"
-    printf "    Show this help\n"
-    echo
-
-    # :command.usage_args
-    printf "%s\n" "Arguments:"
-
-    # :argument.usage
-    printf "  %s\n" "NAME"
-    printf "    Profile to authenticate\n"
     echo
 
   fi
@@ -821,7 +790,7 @@ ocp_create_command() {
 
   ocp_info "Created profile '$name' at $pdir"
   if [ -z "$seeded_auth" ]; then
-    ocp_info "Next: run 'ocp login $name' to authenticate this profile."
+    ocp_info "Next: run 'ocp launch -p $name -- auth login' to authenticate this profile."
   fi
 
 }
@@ -973,41 +942,6 @@ ocp_launch_command() {
     printf ' %q' "${cmd[@]}"
     printf '\n'
     exit 0
-  fi
-
-  if [ -f "$envf" ]; then
-    set -a
-    # shellcheck disable=SC1090
-    . "$envf"
-    set +a
-  fi
-
-  exec env OPENCODE_CONFIG_DIR="$cfg" XDG_DATA_HOME="$data" "${cmd[@]}"
-
-}
-
-# :command.function
-ocp_login_command() {
-
-  # src/login_command.sh
-  name="${args[name]}"
-  ocp_validate_name "$name"
-  ocp_profile_exists "$name" || ocp_die "Profile '$name' does not exist."
-
-  cfg="$(ocp_config_dir "$name")"
-  data="$(ocp_data_dir "$name")"
-  envf="$(ocp_env_file "$name")"
-  ocp_load_manifest "$name"
-
-  cmd=(opencode auth login)
-
-  if [ -n "${WRAPPER:-}" ]; then
-    w="$WRAPPER"
-    w="${w//\{profile_dir\}/$(ocp_profile_dir "$name")}"
-    w="${w//\{config_dir\}/$cfg}"
-    w="${w//\{data_dir\}/$data}"
-    read -ra wrap <<<"$w"
-    cmd=("${wrap[@]}" "${cmd[@]}")
   fi
 
   if [ -f "$envf" ]; then
@@ -1225,13 +1159,6 @@ parse_requirements() {
       action="launch"
       shift
       ocp_launch_parse_requirements "$@"
-      shift $#
-      ;;
-
-    login)
-      action="login"
-      shift
-      ocp_login_parse_requirements "$@"
       shift $#
       ;;
 
@@ -1726,66 +1653,6 @@ ocp_launch_parse_requirements() {
 }
 
 # :command.parse_requirements
-ocp_login_parse_requirements() {
-  local key
-
-  # :command.fixed_flags_filter
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-      --help | -h)
-        long_usage=yes
-        ocp_login_usage
-        exit
-        ;;
-
-      *)
-        break
-        ;;
-
-    esac
-  done
-
-  # :command.command_filter
-  action="login"
-
-  # :command.parse_requirements_while
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-
-      -?*)
-        printf "invalid option: %s\n" "$key" >&2
-        exit 1
-        ;;
-
-      *)
-        # :command.parse_requirements_case
-        # :command.parse_requirements_case_simple
-        # :argument.case
-        if [[ -z ${args['name']+x} ]]; then
-          args['name']=$1
-          shift
-        else
-          printf "invalid argument: %s\n" "$key" >&2
-          exit 1
-        fi
-
-        ;;
-
-    esac
-  done
-
-  # :command.required_args_filter
-  if [[ -z ${args['name']+x} ]]; then
-    printf "missing required argument: NAME\nusage: ocp login NAME\n" >&2
-
-    exit 1
-  fi
-
-}
-
-# :command.parse_requirements
 ocp_pin_parse_requirements() {
   local key
 
@@ -2172,7 +2039,6 @@ run() {
     "resolve") ocp_resolve_command ;;
     "use") ocp_use_command ;;
     "launch") ocp_launch_command ;;
-    "login") ocp_login_command ;;
     "pin") ocp_pin_command ;;
     "edit") ocp_edit_command ;;
     "path") ocp_path_command ;;

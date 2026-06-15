@@ -124,9 +124,9 @@ ocp create work --description "Work account"
 # Make 'personal' the default when nothing else applies
 ocp use personal
 
-# Authenticate each profile once (opens opencode's login in the isolated data dir)
-ocp login personal
-ocp login work
+# Authenticate each profile once (in its isolated data dir)
+ocp launch -p personal -- auth login
+ocp launch -p work -- auth login
 
 # See what you have
 ocp list
@@ -318,7 +318,6 @@ ocp create work --wrapper 'direnv exec {profile_dir} --'
 | `ocp resolve [dir] [-q]` | Show the resolved profile, its source, and paths |
 | `ocp use <name>` | Set the global default profile |
 | `ocp launch [flags] -- <args>` | Resolve a profile and exec opencode with isolated env |
-| `ocp login <name>` | Run `opencode auth login` inside a profile |
 | `ocp pin <name> [dir]` | Write a `.ocprofile` (defaults to the current dir) |
 | `ocp edit <name> [--what …]` | Open a profile's config / manifest / env / data |
 | `ocp path <name>` | Print a profile's resolved directories |
@@ -449,7 +448,7 @@ rm -rf ~/.config/ocp                # remove ALL profiles, auth, and sessions (d
 | `declare: -A: invalid option` when running `ocp` | Your Bash is < 4. `brew install bash` and ensure it's first on `PATH`. |
 | `opencode` still uses the old account after switching | opencode reads `auth.json` at launch — fully quit it, then relaunch. |
 | `Profile '<x>' does not exist` from a `.ocprofile` | The pinned profile was never created. Run `ocp create <x>` or fix the `.ocprofile`. |
-| A profile starts logged-out | Full isolation means a fresh `auth.json`. Run `ocp login <name>` once (or create with `--seed-auth`). |
+| A profile starts logged-out | Full isolation means a fresh `auth.json`. Run `ocp launch -p <name> -- auth login` once (or create with `--seed-auth`). |
 | Secrets not present in opencode | Check `ocp launch -p <name> --print`; confirm the `env`/`WRAPPER` lines are what you expect. |
 
 ---
