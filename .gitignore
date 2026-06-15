@@ -1,5 +1,6 @@
 .omo/
 .idea/
+.ocprofile
 
 # node / yarn (berry, node-modules linker)
 node_modules/
