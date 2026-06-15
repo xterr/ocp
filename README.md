@@ -32,13 +32,13 @@ variables opencode already understands — nothing more.
 ## Install
 
 ```sh
-curl -fsSL https://gitlab.ceanarazvan.ro/xterr/opencode-profiles/-/raw/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/xterr/ocp/main/install.sh | bash
 ```
 
 Pass a profile name (defaults to `default`):
 
 ```sh
-curl -fsSL https://gitlab.ceanarazvan.ro/xterr/opencode-profiles/-/raw/main/install.sh | bash -s -- work
+curl -fsSL https://raw.githubusercontent.com/xterr/ocp/main/install.sh | bash -s -- work
 ```
 
 The installer drops `ocp` into `~/.local/bin`, creates the profile, sets it as the default, and adds the

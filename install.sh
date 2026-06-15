@@ -10,7 +10,7 @@
 #
 set -eu
 
-OCP_SRC_URL="${OCP_SRC_URL:-https://gitlab.ceanarazvan.ro/xterr/opencode-profiles/-/raw/main/ocp}"
+OCP_SRC_URL="${OCP_SRC_URL:-https://raw.githubusercontent.com/xterr/ocp/main/ocp}"
 BIN_DIR="${OCP_BIN_DIR:-$HOME/.local/bin}"
 PROFILE="default"
 DO_SHELL=1
