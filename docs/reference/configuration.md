@@ -6,7 +6,7 @@ All profiles live under `OCP_HOME`, which defaults to `~/.config/ocp`:
 
 ```
 ~/.config/ocp/
-├── active                       # name of the default profile
+├── ocp.json                     # managed state: $schema + version + default profile
 └── profiles/<name>/
     ├── profile.env              # manifest
     ├── env                      # optional environment file
@@ -19,6 +19,23 @@ Override it per invocation or in your shell rc:
 ```sh
 export OCP_HOME=/path/to/ocp
 ```
+
+## State — `ocp.json`
+
+A small, ocp-managed JSON file holding global state. You normally never edit it by hand — `ocp use`,
+`ocp rename`, and `ocp remove` keep it in sync. It carries a `$schema` reference (served from this
+site) and a `version` so the format can evolve:
+
+```json
+{
+  "$schema": "https://xterr.github.io/ocp/ocp.schema.json",
+  "version": 1,
+  "defaultProfile": "work"
+}
+```
+
+Earlier versions used a plain-text `active` file; it is migrated to `ocp.json` automatically the next
+time the default changes.
 
 ## Manifest — `profile.env`
 

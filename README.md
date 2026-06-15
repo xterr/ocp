@@ -13,9 +13,21 @@
 
 <p><a href="https://xterr.github.io/ocp/"><b>Documentation</b></a> · <a href="https://github.com/xterr/ocp/releases"><b>Releases</b></a></p>
 
+<img src="assets/ocp-demo.gif" alt="ocp demo" width="800">
+
 </div>
 
 ---
+
+## Why ocp?
+
+Juggling work and personal opencode accounts means hand-swapping env vars and clobbering your
+sessions. `ocp` gives each project its own auth, session history, and config — and switches
+automatically based on the directory you're in. Think **`direnv` for opencode**.
+
+- 🔐 **Multiple accounts, simultaneously** — separate `auth.json` per profile; no more logging out.
+- 📁 **Auto-switched per directory** — drop a `.ocprofile` in a repo and you're on the right account.
+- 🪶 **Zero dependencies** — one Bash script, no daemon, no config format to learn.
 
 `ocp` lets you run opencode under named **profiles** — *work*, *personal*, *client* — each with its own
 authentication, session history, and configuration (`opencode.json`, agents, skills, plugins, and your
@@ -117,6 +129,10 @@ profiles — it never runs code.
 4. global default (`ocp use`)
 5. none → plain opencode
 
+If the resolved profile no longer exists, an explicitly requested one (`-p`, `$OCP_PROFILE`, or a
+`.ocprofile`) is a hard error, while a stale global default is ignored — opencode just runs without
+a profile (case 5).
+
 ## Secrets & environment
 
 Each profile has two optional hooks. Edit them with `ocp edit <name> --what env|manifest`.
@@ -146,6 +162,7 @@ ocp create work --wrapper 'op run --no-masking --env-file={profile_dir}/secrets.
 | `ocp current` | Print the profile active in this directory |
 | `ocp resolve [dir]` | Show the resolved profile, its source, and paths |
 | `ocp use <name>` | Set the global default profile |
+| `ocp rename <old> <new>` | Rename a profile (repoints the default if it pointed at it) |
 | `ocp launch [-p name] -- <args>` | Run opencode under a profile (isolated env) |
 | `ocp pin <name> [dir]` | Write a `.ocprofile` |
 | `ocp edit <name> [--what …]` | Open a profile's config / manifest / env / data |
@@ -161,7 +178,7 @@ ocp create work --wrapper 'op run --no-masking --env-file={profile_dir}/secrets.
 
 ```
 ~/.config/ocp/
-├── active                       # name of the default profile
+├── ocp.json                     # managed state: $schema, version, default profile
 └── profiles/<name>/
     ├── profile.env              # manifest: DESCRIPTION, WRAPPER, DEFAULT_ARGS
     ├── env                      # optional: sourced before launch

@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://xterr.github.io/ocp/ocp.schema.json",
+  "title": "ocp state",
+  "description": "Managed state file for ocp (isolated opencode profiles). Written and read by ocp; not meant to be hand-edited.",
+  "type": "object",
+  "required": ["version"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "URL of this JSON Schema."
+    },
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Schema version of this file."
+    },
+    "defaultProfile": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "description": "Name of the global default profile used when no -p flag, OCP_PROFILE, or .ocprofile applies."
+    }
+  }
+}

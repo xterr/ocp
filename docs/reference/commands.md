@@ -7,6 +7,7 @@
 | [`current`](#current) | Print the profile active in this directory |
 | [`resolve`](#resolve) | Show the resolved profile, its source, and paths |
 | [`use`](#use) | Set the global default profile |
+| [`rename`](#rename) | Rename a profile (repoints the default if needed) |
 | [`launch`](#launch) | Run opencode under a profile with isolated env |
 | [`pin`](#pin) | Write a `.ocprofile` |
 | [`edit`](#edit) | Open a profile's config, manifest, env, or data |
@@ -62,7 +63,17 @@ Shows the resolved profile, the source of the decision (`flag`, `env:OCP_PROFILE
 ocp use <name>
 ```
 
-Sets the global default profile (written to `~/.config/ocp/active`).
+Sets the global default profile (written to `~/.config/ocp/ocp.json`).
+
+## rename
+
+```sh
+ocp rename <old> <new>
+```
+
+Renames a profile directory. If the global default pointed at `<old>`, it is repointed to `<new>`.
+Fails if `<new>` already exists. Pinned `.ocprofile` files that reference `<old>` are **not** rewritten —
+re-pin them with `ocp pin <new>`.
 
 ## launch
 
@@ -111,6 +122,11 @@ ocp init-shell [--command <name>] [--per-profile-aliases] [--no-chpwd]
 ```
 
 Prints the shell integration to `eval` in your rc file.
+
+The plain `opencode` launcher resolves the profile live on every call, so creating, renaming, or
+removing profiles takes effect immediately. The optional `--per-profile-aliases` functions
+(`opencode-<name>`) are generated once at `eval` time, so after you add or rename a profile you must
+reload your shell (or re-run the `eval`) for those aliases to catch up.
 
 ## self-update
 

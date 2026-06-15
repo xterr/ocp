@@ -45,3 +45,4 @@ ocp_success "Created profile '$name' at $pdir"
 if [ -z "$seeded_auth" ]; then
   ocp_info "Next: run 'ocp launch -p $name -- auth login' to authenticate this profile."
 fi
+ocp_info "If you use per-profile shell aliases (e.g. opencode-$name), reload your shell to pick it up."

@@ -28,7 +28,11 @@ ocp_env_file() {
   printf '%s' "$(ocp_profile_dir "$1")/env"
 }
 
-ocp_active_file() {
+ocp_config_file() {
+  printf '%s' "$(ocp_home)/ocp.json"
+}
+
+ocp_legacy_active_file() {
   printf '%s' "$(ocp_home)/active"
 }
 

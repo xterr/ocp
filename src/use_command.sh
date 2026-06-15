@@ -1,6 +1,5 @@
 name="${args[name]}"
 ocp_validate_name "$name"
 ocp_profile_exists "$name" || ocp_die "Profile '$name' does not exist."
-mkdir -p "$(ocp_home)" || ocp_die "Failed to create $(ocp_home)"
-printf '%s\n' "$name" >"$(ocp_active_file)" || ocp_die "Failed to write active file."
+ocp_set_active "$name"
 ocp_success "Default profile set to '$name'."

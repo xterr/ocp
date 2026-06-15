@@ -63,6 +63,19 @@ commands:
     required: true
     help: Profile to set as default
 
+- name: rename
+  alias: mv
+  help: Rename a profile (repoints the global default if it pointed at it)
+  args:
+  - name: old
+    required: true
+    help: Existing profile name
+  - name: new
+    required: true
+    help: New profile name
+  examples:
+  - ocp rename personal home
+
 - name: launch
   alias: run
   help: Resolve a profile and exec opencode with isolated env (core command)

@@ -1,4 +1,14 @@
 p="$(ocp_resolve_profile "${args[--profile]:-}" "$PWD" 2>/dev/null || true)"
+src="$(ocp_resolve_source "${args[--profile]:-}" "$PWD" 2>/dev/null || true)"
+
+if [ -n "$p" ] && ! ocp_profile_exists "$p"; then
+  if [ "$src" = "active-default" ]; then
+    ocp_warn "Default profile '$p' no longer exists; running opencode without a profile. Set a new default with 'ocp use <name>'."
+    p=""
+  else
+    ocp_die "Profile '$p' does not exist. Create it with: ocp create $p"
+  fi
+fi
 
 pass=()
 if [ "${other_args[*]:-}" != "" ]; then
@@ -14,8 +24,6 @@ if [ -z "$p" ]; then
   fi
   exec opencode "${pass[@]}"
 fi
-
-ocp_profile_exists "$p" || ocp_die "Profile '$p' does not exist. Create it with: ocp create $p"
 
 cfg="$(ocp_config_dir "$p")"
 data="$(ocp_data_dir "$p")"

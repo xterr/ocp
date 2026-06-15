@@ -20,15 +20,59 @@ ocp_find_ocprofile() {
   return 1
 }
 
-# Read the active default profile name (if any).
-ocp_active_profile() {
+# Extract a flat JSON string value: ocp_json_get_string <file> <key>.
+# Profile names are restricted to [A-Za-z0-9_-], so a targeted match is safe
+# and keeps ocp dependency-free (no jq).
+ocp_json_get_string() {
+  local file="$1" key="$2" val
+  [ -f "$file" ] || return 1
+  val="$(sed -n "s/.*\"$key\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" "$file" | head -n1)"
+  [ -n "$val" ] || return 1
+  printf '%s\n' "$val"
+}
+
+ocp_write_config() {
+  local f def schema
+  f="$(ocp_config_file)"
+  def="$1"
+  schema="https://xterr.github.io/ocp/ocp.schema.json"
+  mkdir -p "$(ocp_home)" || ocp_die "Failed to create $(ocp_home)"
+  if [ -n "$def" ]; then
+    printf '{\n  "$schema": "%s",\n  "version": 1,\n  "defaultProfile": "%s"\n}\n' "$schema" "$def" >"$f" || ocp_die "Failed to write $f"
+  else
+    printf '{\n  "$schema": "%s",\n  "version": 1\n}\n' "$schema" >"$f" || ocp_die "Failed to write $f"
+  fi
+}
+
+ocp_set_active() {
+  ocp_write_config "$1"
+  rm -f "$(ocp_legacy_active_file)" 2>/dev/null || true
+}
+
+ocp_clear_active() {
+  ocp_write_config ""
+  rm -f "$(ocp_legacy_active_file)" 2>/dev/null || true
+}
+
+ocp_read_active_file() {
   local af name
-  af="$(ocp_active_file)"
+  af="$1"
   [ -f "$af" ] || return 1
   IFS= read -r name <"$af" || name=""
   name="$(printf '%s' "$name" | tr -d '[:space:]')"
   [ -n "$name" ] || return 1
   printf '%s\n' "$name"
+}
+
+# Read the active default profile name, preferring ocp.json and falling back
+# to the legacy 'active' file for backward compatibility.
+ocp_active_profile() {
+  local name
+  if name="$(ocp_json_get_string "$(ocp_config_file)" defaultProfile)"; then
+    name="$(printf '%s' "$name" | tr -d '[:space:]')"
+    [ -n "$name" ] && { printf '%s\n' "$name"; return 0; }
+  fi
+  ocp_read_active_file "$(ocp_legacy_active_file)"
 }
 
 # Resolve the active profile via the priority chain.

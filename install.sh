@@ -16,6 +16,7 @@ OCP_SRC_URL="${OCP_SRC_URL:-}"
 OCP_VERSION="${OCP_VERSION:-}"
 BIN_DIR="${OCP_BIN_DIR:-$HOME/.local/bin}"
 PROFILE="default"
+PROFILE_EXPLICIT=0
 DO_SHELL=1
 
 while [ $# -gt 0 ]; do
@@ -43,7 +44,7 @@ EOF
       exit 0
       ;;
     -*) printf 'Unknown option: %s\n' "$1" >&2; exit 1 ;;
-    *) PROFILE="$1" ;;
+    *) PROFILE="$1"; PROFILE_EXPLICIT=1 ;;
   esac
   shift
 done
@@ -107,15 +108,34 @@ case ":$PATH:" in
   *) warn "$BIN_DIR is not on PATH (the shell snippet below will add it)" ;;
 esac
 
+profiles_dir="${OCP_HOME:-$HOME/.config/ocp}/profiles"
+any_profiles() {
+  [ -d "$profiles_dir" ] || return 1
+  for d in "$profiles_dir"/*/; do
+    [ -d "$d" ] && return 0
+  done
+  return 1
+}
+
+auth_hint="$PROFILE"
 if bash4="$(find_bash4)"; then
   if "$bash4" "$BIN_DIR/ocp" path "$PROFILE" >/dev/null 2>&1; then
     ok "profile '$PROFILE' already exists"
+  elif [ "$PROFILE_EXPLICIT" = 1 ]; then
+    "$bash4" "$BIN_DIR/ocp" create "$PROFILE" >/dev/null
+    ok "created profile '$PROFILE'"
+    "$bash4" "$BIN_DIR/ocp" use "$PROFILE" >/dev/null
+    ok "default profile -> '$PROFILE'"
+  elif any_profiles; then
+    # User deleted/renamed the default; don't recreate it on every upgrade.
+    ok "existing profiles found; skipping default profile creation"
+    auth_hint=""
   else
     "$bash4" "$BIN_DIR/ocp" create "$PROFILE" >/dev/null
     ok "created profile '$PROFILE'"
+    "$bash4" "$BIN_DIR/ocp" use "$PROFILE" >/dev/null
+    ok "default profile -> '$PROFILE'"
   fi
-  "$bash4" "$BIN_DIR/ocp" use "$PROFILE" >/dev/null
-  ok "default profile -> '$PROFILE'"
 else
   warn "bash >= 4 not found (ocp needs it). Install it (macOS: brew install bash), then: ocp create $PROFILE && ocp use $PROFILE"
 fi
@@ -151,5 +171,10 @@ if [ "$DO_SHELL" = 1 ]; then
   fi
 fi
 
-printf '\n%sDone.%s Open a new shell, then authenticate:\n' "$B" "$X"
-printf '  ocp launch -p %s -- auth login\n' "$PROFILE"
+if [ -n "$auth_hint" ]; then
+  printf '\n%sDone.%s Open a new shell, then authenticate:\n' "$B" "$X"
+  printf '  ocp launch -p %s -- auth login\n' "$auth_hint"
+else
+  printf '\n%sDone.%s Your existing profiles are intact. List them with:\n' "$B" "$X"
+  printf '  ocp list\n'
+fi

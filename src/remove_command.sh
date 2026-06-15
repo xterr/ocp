@@ -26,6 +26,7 @@ ocp_success "Removed profile '$name'."
 active=""
 ocp_active_profile >/dev/null && active="$(ocp_active_profile)"
 if [ "$name" = "$active" ]; then
-  rm -f "$(ocp_active_file)"
+  ocp_clear_active
   ocp_warn "Removed the active default; set a new one with 'ocp use <name>'."
 fi
+ocp_info "If you use per-profile shell aliases, reload your shell to drop the stale 'opencode-$name' launcher."
