@@ -1,12 +1,23 @@
 [changelog]
-header = ""
+header = """
+# Changelog
+
+All notable changes to this project are documented here.
+
+"""
 body = """
+{% if version %}\
+## [{{ version }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+## [Unreleased]
+{% endif %}\
 {% for group, commits in commits | group_by(attribute="group") %}
 ### {{ group | striptags | trim | upper_first }}
 {% for commit in commits %}
 - {% if commit.scope %}*({{ commit.scope }})* {% endif %}{% if commit.breaking %}[**breaking**] {% endif %}{{ commit.message | upper_first }}\
 {% endfor %}
 {% endfor %}
+
 """
 trim = true
 
