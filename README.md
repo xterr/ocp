@@ -9,6 +9,7 @@
 <img alt="bash >= 4.0" src="https://img.shields.io/badge/bash-%E2%89%A5%204.0-4EAA25?logo=gnubash&logoColor=white">
 <img alt="built with bashly" src="https://img.shields.io/badge/built%20with-bashly-1f6feb">
 <img alt="single file" src="https://img.shields.io/badge/single--file-yes-3FB950">
+<img alt="license MIT" src="https://img.shields.io/badge/license-MIT-blue">
 
 <p><a href="https://xterr.github.io/ocp/"><b>Documentation</b></a> · <a href="https://github.com/xterr/ocp/releases"><b>Releases</b></a></p>
 
@@ -44,18 +45,28 @@ curl -fsSL https://raw.githubusercontent.com/xterr/ocp/main/install.sh | bash -s
 ```
 
 The installer downloads `ocp` from the latest [release](https://github.com/xterr/ocp/releases) into
-`~/.local/bin`, creates the profile, sets it as the default, and adds the shell integration to your rc
-file. Use `--no-shell` to skip the rc change, or `--version <x.y.z>` to pin a specific release.
+`~/.local/bin`, creates the profile, sets it as the default, and wires the shell integration into the
+right rc file. Use `--no-shell` to skip the rc change, or `--version <x.y.z>` to pin a specific release.
+
+**Works with zsh, bash, and fish.** `ocp` itself is a Bash script, so it needs **Bash ≥ 4 installed as its
+interpreter** (macOS ships 3.2 — `brew install bash`) — but *not* as your login shell. The installer
+detects your shell and adds the matching integration.
 
 <details>
 <summary>Manual install</summary>
 
 ```sh
 install -m755 ocp ~/.local/bin/ocp        # ~/.local/bin must be on your PATH
-echo 'eval "$(ocp init-shell)"' >> ~/.zshrc
+
+# zsh / bash — add to ~/.zshrc or ~/.bashrc:
+eval "$(ocp init-shell)"
+
+# fish — add to ~/.config/fish/config.fish:
+ocp init-shell --shell fish | source
 ```
 
-Requires **Bash ≥ 4** (macOS ships 3.2 — `brew install bash`) and `opencode` on your PATH.
+`init-shell` auto-detects your shell from `$SHELL`; pass `--shell zsh|bash|fish|posix` to override.
+`opencode` and `oh-my-openagent` must be available too.
 
 </details>
 
@@ -196,3 +207,7 @@ rm -rf ~/.config/ocp             # remove all profiles, auth, and sessions (dest
 ```
 
 Then remove the `# ocp` block from your shell rc.
+
+## License
+
+[MIT](LICENSE) © xterr

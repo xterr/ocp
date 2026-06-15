@@ -4,11 +4,18 @@
 
 ## Requirements
 
-- **Bash ≥ 4** to run `ocp`. macOS ships 3.2 — install a modern Bash and keep it first on `PATH`:
+- **Bash ≥ 4 installed as the interpreter** — `ocp` is a Bash script, so a modern Bash must be on the
+  system. This is *not* your login shell: **zsh, bash, and fish are all fully supported**. macOS ships
+  Bash 3.2, so install a newer one:
   ```sh
   brew install bash
   ```
 - **opencode** installed and on your `PATH`.
+
+::: tip
+Your interactive shell (zsh, bash, fish) is independent of the Bash that runs the `ocp` script. The
+installer detects your shell and wires up the matching integration automatically.
+:::
 
 ## Install
 
@@ -34,7 +41,12 @@ curl -fsSL https://raw.githubusercontent.com/xterr/ocp/main/install.sh | bash -s
 
 ```sh
 install -m755 ocp ~/.local/bin/ocp        # ~/.local/bin must be on your PATH
-echo 'eval "$(ocp init-shell)"' >> ~/.zshrc
+
+# zsh / bash — add to ~/.zshrc or ~/.bashrc:
+eval "$(ocp init-shell)"
+
+# fish — add to ~/.config/fish/config.fish:
+ocp init-shell --shell fish | source
 ```
 
 ## Quick start
@@ -48,20 +60,25 @@ opencode                                         # runs under the active profile
 
 ## Shell integration
 
-`ocp init-shell` prints a snippet that makes plain `opencode` profile-aware. Add it to your shell rc:
+`ocp init-shell` prints a snippet that makes plain `opencode` profile-aware. It emits the right syntax for
+your shell (auto-detected from `$SHELL`, or set `--shell zsh|bash|fish|posix`).
 
 ```sh
+# zsh / bash — add to ~/.zshrc or ~/.bashrc:
 eval "$(ocp init-shell)"
+
+# fish — add to ~/.config/fish/config.fish:
+ocp init-shell --shell fish | source
 ```
 
-This defines a wrapper that resolves the active profile before launching opencode:
-
-```sh
-opencode() { command ocp launch -- "$@"; }
-```
+This defines a wrapper that resolves the active profile before launching opencode, plus a directory-change
+hook that tracks the active profile (zsh `chpwd`, bash `PROMPT_COMMAND`, fish `--on-variable PWD`). The
+`.ocprofile` directory switching works in every shell because it is resolved at launch — the hook only
+keeps the `$OCP_ACTIVE_PROFILE` prompt variable current.
 
 Options:
 
+- `--shell <name>` — force `zsh`, `bash`, `fish`, or `posix` output.
 - `--command <name>` — name the function something other than `opencode`.
 - `--per-profile-aliases` — also emit `opencode-work`, `opencode-personal`, … one per profile.
 - `--no-chpwd` — skip the directory-change hook that tracks the active profile.
