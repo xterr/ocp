@@ -56,7 +56,9 @@ detects your shell and adds the matching integration.
 <summary>Manual install</summary>
 
 ```sh
-install -m755 ocp ~/.local/bin/ocp        # ~/.local/bin must be on your PATH
+# download the latest release binary onto your PATH:
+curl -fsSL https://github.com/xterr/ocp/releases/latest/download/ocp -o ~/.local/bin/ocp
+chmod +x ~/.local/bin/ocp
 
 # zsh / bash — add to ~/.zshrc or ~/.bashrc:
 eval "$(ocp init-shell)"
@@ -177,8 +179,9 @@ bashly generate                  # development build
 bashly generate --env production # slimmer release build
 ```
 
-Never hand-edit the generated `ocp`. Help-text colors live in `settings.yml`; runtime color follows your
-terminal and the [`NO_COLOR`](https://no-color.org) standard.
+The generated `ocp` is **not committed** — it is a build artifact produced by `bashly generate` and
+attached to each GitHub release by CI. Never hand-edit it. Help-text colors live in `settings.yml`;
+runtime color follows your terminal and the [`NO_COLOR`](https://no-color.org) standard.
 
 ## Releasing
 

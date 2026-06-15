@@ -40,7 +40,9 @@ curl -fsSL https://raw.githubusercontent.com/xterr/ocp/main/install.sh | bash -s
 ### Manual install
 
 ```sh
-install -m755 ocp ~/.local/bin/ocp        # ~/.local/bin must be on your PATH
+# download the latest release binary onto your PATH:
+curl -fsSL https://github.com/xterr/ocp/releases/latest/download/ocp -o ~/.local/bin/ocp
+chmod +x ~/.local/bin/ocp
 
 # zsh / bash — add to ~/.zshrc or ~/.bashrc:
 eval "$(ocp init-shell)"

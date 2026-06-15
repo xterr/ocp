@@ -17,3 +17,6 @@ docs/.vitepress/cache/
 
 # git-cliff generated notes (CI only)
 RELEASE_NOTES.md
+
+# generated binary (built by bashly; released via CI, not committed)
+/ocp
