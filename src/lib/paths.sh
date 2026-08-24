@@ -20,6 +20,10 @@ ocp_data_dir() {
   printf '%s' "$(ocp_profile_dir "$1")/data"
 }
 
+ocp_state_dir() {
+  printf '%s' "$(ocp_data_dir "$1")/state"
+}
+
 ocp_manifest() {
   printf '%s' "$(ocp_profile_dir "$1")/profile.env"
 }

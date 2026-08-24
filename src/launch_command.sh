@@ -27,6 +27,7 @@ fi
 
 cfg="$(ocp_config_dir "$p")"
 data="$(ocp_data_dir "$p")"
+state="$(ocp_state_dir "$p")"
 envf="$(ocp_env_file "$p")"
 ocp_load_manifest "$p"
 
@@ -49,6 +50,7 @@ fi
 if [ -n "${args[--print]}" ]; then
   printf 'OPENCODE_CONFIG_DIR=%s\n' "$cfg"
   printf 'XDG_DATA_HOME=%s\n' "$data"
+  printf 'XDG_STATE_HOME=%s\n' "$state"
   printf 'OMO_PROFILE=%s\n' "$p"
   [ -f "$envf" ] && printf 'env-file: %s\n' "$envf"
   printf 'exec'
@@ -71,5 +73,5 @@ fi
 
 # omo reads one home-anchored ~/.omo/omo.jsonc, so OPENCODE_CONFIG_DIR no
 # longer isolates it; OMO_PROFILE picks the section instead.
-exec env OPENCODE_CONFIG_DIR="$cfg" XDG_DATA_HOME="$data" \
+exec env OPENCODE_CONFIG_DIR="$cfg" XDG_DATA_HOME="$data" XDG_STATE_HOME="$state" \
   OMO_PROFILE="${OMO_PROFILE:-$p}" "${cmd[@]}"
