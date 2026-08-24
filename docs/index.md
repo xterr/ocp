@@ -18,7 +18,7 @@ features:
   - title: Isolated auth & sessions
     details: Each profile has its own auth.json and session database. Stay logged into multiple accounts side by side.
   - title: Isolated config & omo
-    details: Separate opencode.json, AGENTS.md, agents, skills, plugins, and oh-my-openagent setup per profile.
+    details: Separate opencode.json, AGENTS.md, agents, skills, and plugins per profile, plus a per-profile oh-my-openagent section via OMO_PROFILE.
   - title: Per-directory activation
     details: Drop a .ocprofile in a project and opencode picks the right profile automatically.
   - title: Bring your own secrets

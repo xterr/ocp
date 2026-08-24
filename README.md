@@ -33,16 +33,16 @@ Without `ocp`, this means manually exporting `OPENCODE_CONFIG_DIR` / `XDG_DATA_H
 and remembering to reset them — one slip and you've cross-contaminated accounts or sessions.
 
 `ocp` lets you run opencode under named **profiles** — *work*, *personal*, *client* — each with its own
-authentication, session history, and configuration (`opencode.json`, agents, skills, plugins, and your
-`oh-my-openagent.json`). Pick a profile explicitly, set a global default, or let it switch **automatically**
-based on the directory you're in. It is a single, dependency-free Bash script that sets two environment
-variables opencode already understands — nothing more.
+authentication, session history, and configuration (`opencode.json`, agents, skills, plugins, and its own
+oh-my-openagent section). Pick a profile explicitly, set a global default, or let it switch **automatically**
+based on the directory you're in. It is a single, dependency-free Bash script that sets three environment
+variables opencode and omo already understand — nothing more.
 
 ## Features
 
 - **Isolated auth** — separate `auth.json` per profile; stay logged into multiple accounts at once.
 - **Isolated sessions** — separate session database per profile.
-- **Isolated config** — separate `opencode.json`, `AGENTS.md`, agents, skills, plugins, and omo setup.
+- **Isolated config** — separate `opencode.json`, `AGENTS.md`, agents, skills, and plugins, plus a per-profile omo section.
 - **Automatic per-directory profiles** — a `.ocprofile` file activates a profile for a whole project tree.
 - **Bring your own secrets** — plain env files, macOS Keychain, 1Password, or any wrapper command.
 - **Zero runtime dependencies** — one Bash script; no daemons, no config format to learn.
@@ -102,16 +102,43 @@ After `eval "$(ocp init-shell)"` is in your shell, plain `opencode` is profile-a
 
 ## How isolation works
 
-opencode reads its directories from environment variables. `ocp` sets only the two that matter, scoped to
-the launched process:
+opencode reads its directories from environment variables. `ocp` sets three, scoped to the launched
+process:
 
 | What | Variable | Resolves to | Isolated |
 | --- | --- | --- | --- |
-| config + omo | `OPENCODE_CONFIG_DIR` | `<profile>/config` | yes |
+| config | `OPENCODE_CONFIG_DIR` | `<profile>/config` | yes |
 | auth + sessions | `XDG_DATA_HOME` | `<profile>/data` | yes |
+| omo section | `OMO_PROFILE` | `<name>` | yes, by section |
 | binary cache | *(untouched)* | shared | shared on purpose |
 
-Everything else is a child of those two directories, so it is isolated automatically.
+Agents, skills, plugins, auth, and sessions are children of the first two directories, so they are
+isolated automatically.
+
+### oh-my-openagent (omo)
+
+omo needs its own variable. Since omo 5.x it reads a **single, home-anchored** `~/.omo/omo.jsonc`
+(plus project-level `.omo/omo.jsonc`) and offers no variable to relocate that file, so
+`OPENCODE_CONFIG_DIR` no longer isolates it. omo instead selects a section from the file's top-level
+`profiles` object, and `ocp` exports `OMO_PROFILE=<profile>` to pick it:
+
+```jsonc
+// ~/.omo/omo.jsonc
+{
+  "[opencode]": {
+    "claude_code": { "skills": false }        // shared by every profile
+  },
+  "profiles": {
+    "personal": { "[opencode]": { "agents": { "oracle": { "model": "anthropic/claude-opus-4-7" } } } },
+    "work":     { "[opencode]": { "agents": { "oracle": { "model": "llmgateway/claude-opus-4-7" } } } }
+  }
+}
+```
+
+The profile layer merges over the base, so each section only declares what differs. If
+`profiles.<name>` is missing, omo does **not** error — it silently falls back to the base config, so
+`ocp create` warns and `ocp resolve` shows which section is active. Set `OMO_PROFILE` in a profile's
+`env` file to point at a differently-named section.
 
 ## Per-directory switching
 
@@ -188,11 +215,12 @@ ocp create work --wrapper 'op run --no-masking --env-file={profile_dir}/secrets.
 └── profiles/<name>/
     ├── profile.env              # manifest: DESCRIPTION, WRAPPER, DEFAULT_ARGS
     ├── env                      # optional: sourced before launch
-    ├── config/                  # OPENCODE_CONFIG_DIR (opencode.json, omo, agents, …)
+    ├── config/                  # OPENCODE_CONFIG_DIR (opencode.json, agents, skills, …)
     └── data/opencode/           # XDG_DATA_HOME (auth.json, sessions, …)
 ```
 
-Override the root with `OCP_HOME`.
+Override the root with `OCP_HOME`. omo config lives outside this tree, in `~/.omo/omo.jsonc` under
+`profiles.<name>`.
 
 ## Build from source
 

@@ -100,6 +100,8 @@ ocp edit <name> --what <target>
 
 Targets: `config` (default), `manifest`, `opencode-json`, `omo`, `env`, `data`. Opens the target in `$VISUAL`/`$EDITOR`.
 
+`omo` opens the shared `~/.omo/omo.jsonc` rather than a file inside the profile — omo config is isolated by the `profiles.<name>` section it contains, not by directory. See [Profiles & isolation](/guide/profiles#oh-my-openagent-omo).
+
 ## path
 
 ```sh

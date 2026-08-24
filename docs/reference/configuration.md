@@ -63,6 +63,11 @@ A one-line file naming a profile. Placed in a project, it activates that profile
 | --- | --- |
 | `OCP_HOME` | Root directory for profiles (default `~/.config/ocp`) |
 | `OCP_PROFILE` | Force a profile, overriding `.ocprofile` and the default |
+| `OMO_PROFILE` | Set by `ocp` to the profile name; selects the omo config section. Set it yourself (e.g. in a profile's `env`) to point at a differently-named section |
+
+## omo config — `~/.omo/omo.jsonc`
+
+Not managed by `ocp`, and deliberately not inside a profile: since omo 5.x this file is home-anchored with no relocation variable. `ocp` isolates it by exporting `OMO_PROFILE`, which picks a section from the file's top-level `profiles` object. See [Profiles & isolation](/guide/profiles#oh-my-openagent-omo).
 
 ## What opencode sees
 
@@ -71,6 +76,7 @@ For the resolved profile, `ocp` sets exactly:
 ```sh
 OPENCODE_CONFIG_DIR=<profile>/config
 XDG_DATA_HOME=<profile>/data
+OMO_PROFILE=<profile>
 ```
 
 Then it optionally applies the profile's `WRAPPER` and sources its `env` file before exec-ing opencode. The binary cache is left shared.
