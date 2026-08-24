@@ -2,11 +2,40 @@
 
 All notable changes to this project are documented here.
 
-## [Unreleased]
+## [1.6.0] - 2026-08-24
+
+### Features
+
+- Isolate XDG_STATE_HOME per profile
+
+### Bug Fixes
+
+- Ignore inherited OMO_PROFILE so nested launches honor -p
 
 ### Documentation
 
 - Update changelog for 1.4.1
+- Update changelog for 1.5.0
+- Document XDG_STATE_HOME isolation and cache sharing
+
+### Miscellaneous
+
+- 1.6.0
+
+## [1.5.0] - 2026-08-24
+
+### Features
+
+- Isolate omo config per profile via OMO_PROFILE
+
+### Documentation
+
+- Document per-profile omo config
+
+### Miscellaneous
+
+- Ignore local .tmp scratch dir
+- 1.5.0
 
 ## [1.4.1] - 2026-06-15
 
