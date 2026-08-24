@@ -11,7 +11,9 @@ All profiles live under `OCP_HOME`, which defaults to `~/.config/ocp`:
     ├── profile.env              # manifest
     ├── env                      # optional environment file
     ├── config/                  # OPENCODE_CONFIG_DIR
-    └── data/opencode/           # XDG_DATA_HOME
+    └── data/
+        ├── opencode/            # XDG_DATA_HOME
+        └── state/               # XDG_STATE_HOME
 ```
 
 Override it per invocation or in your shell rc:
@@ -63,7 +65,7 @@ A one-line file naming a profile. Placed in a project, it activates that profile
 | --- | --- |
 | `OCP_HOME` | Root directory for profiles (default `~/.config/ocp`) |
 | `OCP_PROFILE` | Force a profile, overriding `.ocprofile` and the default |
-| `OMO_PROFILE` | Set by `ocp` to the profile name; selects the omo config section. Set it yourself (e.g. in a profile's `env`) to point at a differently-named section |
+| `OMO_PROFILE` | Set by `ocp` to the profile name; selects the omo config section. Override it in a profile's `env` file to target a differently-named section. An inherited value from the surrounding shell is ignored |
 
 ## omo config — `~/.omo/omo.jsonc`
 
@@ -76,7 +78,10 @@ For the resolved profile, `ocp` sets exactly:
 ```sh
 OPENCODE_CONFIG_DIR=<profile>/config
 XDG_DATA_HOME=<profile>/data
+XDG_STATE_HOME=<profile>/data/state
 OMO_PROFILE=<profile>
 ```
 
-Then it optionally applies the profile's `WRAPPER` and sources its `env` file before exec-ing opencode. The binary cache is left shared.
+Then it optionally applies the profile's `WRAPPER` and sources its `env` file before exec-ing opencode.
+
+`XDG_CACHE_HOME` is deliberately left alone: it holds public model catalogs and version-keyed package downloads, so sharing it avoids re-fetching every plugin and language server per profile. See [Profiles & isolation](/guide/profiles#state-vs-cache).

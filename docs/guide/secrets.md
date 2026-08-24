@@ -78,6 +78,8 @@ The same mechanism works with any "run-with-env" tool — for example `aws-vault
 ocp launch -p work --print -- run "hi"
 # OPENCODE_CONFIG_DIR=~/.config/ocp/profiles/work/config
 # XDG_DATA_HOME=~/.config/ocp/profiles/work/data
+# XDG_STATE_HOME=~/.config/ocp/profiles/work/data/state
+# OMO_PROFILE=work
 # env-file: ~/.config/ocp/profiles/work/env
 # exec op run --no-masking --env-file=…/secrets.env -- opencode run hi
 ```

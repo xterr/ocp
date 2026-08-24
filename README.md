@@ -35,7 +35,7 @@ and remembering to reset them — one slip and you've cross-contaminated account
 `ocp` lets you run opencode under named **profiles** — *work*, *personal*, *client* — each with its own
 authentication, session history, and configuration (`opencode.json`, agents, skills, plugins, and its own
 oh-my-openagent section). Pick a profile explicitly, set a global default, or let it switch **automatically**
-based on the directory you're in. It is a single, dependency-free Bash script that sets three environment
+based on the directory you're in. It is a single, dependency-free Bash script that sets four environment
 variables opencode and omo already understand — nothing more.
 
 ## Features
@@ -109,11 +109,19 @@ process:
 | --- | --- | --- | --- |
 | config | `OPENCODE_CONFIG_DIR` | `<profile>/config` | yes |
 | auth + sessions | `XDG_DATA_HOME` | `<profile>/data` | yes |
+| prompt history + recent models | `XDG_STATE_HOME` | `<profile>/data/state` | yes |
 | omo section | `OMO_PROFILE` | `<name>` | yes, by section |
-| binary cache | *(untouched)* | shared | shared on purpose |
+| model + package cache | *(untouched)* | shared | shared on purpose |
 
 Agents, skills, plugins, auth, and sessions are children of the first two directories, so they are
 isolated automatically.
+
+`XDG_STATE_HOME` matters because opencode keeps your typed prompt history, frecency ranking,
+recent-model list, and plugin metadata there. Left shared, one profile's prompts and models surface in
+another. It is nested inside `data/`, so `ocp remove --purge-data` still cleans it up.
+
+The cache stays shared deliberately: it holds public model catalogs and version-keyed package
+downloads (hundreds of MB), none of it account-bearing.
 
 ### oh-my-openagent (omo)
 
@@ -216,7 +224,9 @@ ocp create work --wrapper 'op run --no-masking --env-file={profile_dir}/secrets.
     ├── profile.env              # manifest: DESCRIPTION, WRAPPER, DEFAULT_ARGS
     ├── env                      # optional: sourced before launch
     ├── config/                  # OPENCODE_CONFIG_DIR (opencode.json, agents, skills, …)
-    └── data/opencode/           # XDG_DATA_HOME (auth.json, sessions, …)
+    └── data/
+        ├── opencode/            # XDG_DATA_HOME (auth.json, sessions, …)
+        └── state/               # XDG_STATE_HOME (prompt history, recent models, …)
 ```
 
 Override the root with `OCP_HOME`. omo config lives outside this tree, in `~/.omo/omo.jsonc` under

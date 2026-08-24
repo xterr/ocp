@@ -8,10 +8,19 @@ opencode reads its directories from environment variables. `ocp` sets three, sco
 | --- | --- | --- | --- |
 | config | `OPENCODE_CONFIG_DIR` | `<profile>/config` | yes |
 | auth + sessions | `XDG_DATA_HOME` | `<profile>/data` | yes |
+| prompt history + recent models | `XDG_STATE_HOME` | `<profile>/data/state` | yes |
 | omo section | `OMO_PROFILE` | `<name>` | yes, by section |
-| binary cache | *(untouched)* | shared | shared on purpose |
+| model + package cache | *(untouched)* | shared | shared on purpose |
 
-Your agents, skills, plugins, auth, and session history are children of the first two directories, so they are isolated automatically. The opencode binary cache is left shared so it is not re-downloaded per profile.
+Your agents, skills, plugins, auth, and session history are children of the first two directories, so they are isolated automatically.
+
+## State vs cache
+
+opencode keeps two more directories outside config and data, and ocp treats them differently.
+
+**`XDG_STATE_HOME` is isolated.** It holds your typed prompt history, frecency ranking, recent-model list, plugin metadata, and lock files. Shared, those bleed across accounts — one profile's prompts are recallable in another, and the model picker mixes providers from both. ocp nests it at `<profile>/data/state`, so `ocp remove --purge-data` still cleans it up. opencode creates the directory on first launch; there is nothing to migrate.
+
+**`XDG_CACHE_HOME` is left shared, on purpose.** It holds public model catalogs and version-keyed package downloads — hundreds of megabytes, none of it account-bearing. Isolating it would re-download every plugin and language server per profile for no privacy gain.
 
 ## oh-my-openagent (omo)
 
@@ -48,7 +57,9 @@ The profile layer merges over the base, so a section only needs to declare what 
 If `profiles.<name>` is missing, omo does **not** error — it silently falls back to the base config, which can hand one profile another account's models. `ocp create` warns about this, and `ocp resolve` shows which section is in play.
 :::
 
-To point a profile at a differently-named section, set `OMO_PROFILE` in the profile's `env` file — a value already in the environment wins over the profile name.
+To point a profile at a differently-named section, set `OMO_PROFILE` in the profile's `env` file.
+
+An `OMO_PROFILE` inherited from the surrounding shell is deliberately ignored. Otherwise launching opencode from inside another profile's session would carry that session's section past an explicit `-p`, which is exactly the leak this is meant to prevent.
 
 ## Layout
 
@@ -59,7 +70,9 @@ To point a profile at a differently-named section, set `OMO_PROFILE` in the prof
     ├── profile.env              # manifest: DESCRIPTION, WRAPPER, DEFAULT_ARGS
     ├── env                      # optional: sourced before launch
     ├── config/                  # OPENCODE_CONFIG_DIR (opencode.json, agents, skills, …)
-    └── data/opencode/           # XDG_DATA_HOME (auth.json, sessions, …)
+    └── data/
+        ├── opencode/            # XDG_DATA_HOME (auth.json, sessions, …)
+        └── state/               # XDG_STATE_HOME (prompt history, recent models, …)
 ```
 
 omo config lives outside this tree, in `~/.omo/omo.jsonc` under `profiles.<name>`.
