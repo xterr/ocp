@@ -49,13 +49,18 @@ fi
 if [ -n "${args[--print]}" ]; then
   printf 'OPENCODE_CONFIG_DIR=%s\n' "$cfg"
   printf 'XDG_DATA_HOME=%s\n' "$data"
-  printf 'OMO_PROFILE=%s\n' "${OMO_PROFILE:-$p}"
+  printf 'OMO_PROFILE=%s\n' "$p"
   [ -f "$envf" ] && printf 'env-file: %s\n' "$envf"
   printf 'exec'
   printf ' %q' "${cmd[@]}"
   printf '\n'
   exit 0
 fi
+
+# Discard any inherited OMO_PROFILE so a nested launch (opencode started from
+# inside another profile's session) cannot leak the outer profile's omo section
+# past an explicit -p. Only the profile's own env file may override.
+unset OMO_PROFILE
 
 if [ -f "$envf" ]; then
   set -a
@@ -65,7 +70,6 @@ if [ -f "$envf" ]; then
 fi
 
 # omo reads one home-anchored ~/.omo/omo.jsonc, so OPENCODE_CONFIG_DIR no
-# longer isolates it; OMO_PROFILE picks the section. A value already set by
-# the env file wins, to allow pointing at a differently-named omo section.
+# longer isolates it; OMO_PROFILE picks the section instead.
 exec env OPENCODE_CONFIG_DIR="$cfg" XDG_DATA_HOME="$data" \
   OMO_PROFILE="${OMO_PROFILE:-$p}" "${cmd[@]}"
