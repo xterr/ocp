@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased]
+
+### Documentation
+
+- Update changelog for 1.4.1
+
 ## [1.4.1] - 2026-06-15
 
 ### Features
