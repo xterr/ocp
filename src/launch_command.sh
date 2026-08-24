@@ -49,6 +49,7 @@ fi
 if [ -n "${args[--print]}" ]; then
   printf 'OPENCODE_CONFIG_DIR=%s\n' "$cfg"
   printf 'XDG_DATA_HOME=%s\n' "$data"
+  printf 'OMO_PROFILE=%s\n' "${OMO_PROFILE:-$p}"
   [ -f "$envf" ] && printf 'env-file: %s\n' "$envf"
   printf 'exec'
   printf ' %q' "${cmd[@]}"
@@ -63,4 +64,8 @@ if [ -f "$envf" ]; then
   set +a
 fi
 
-exec env OPENCODE_CONFIG_DIR="$cfg" XDG_DATA_HOME="$data" "${cmd[@]}"
+# omo reads one home-anchored ~/.omo/omo.jsonc, so OPENCODE_CONFIG_DIR no
+# longer isolates it; OMO_PROFILE picks the section. A value already set by
+# the env file wins, to allow pointing at a differently-named omo section.
+exec env OPENCODE_CONFIG_DIR="$cfg" XDG_DATA_HOME="$data" \
+  OMO_PROFILE="${OMO_PROFILE:-$p}" "${cmd[@]}"

@@ -7,7 +7,7 @@ case "$what" in
   config) target="$pdir/config" ;;
   manifest) target="$(ocp_manifest "$name")" ;;
   opencode-json) target="$pdir/config/opencode.json" ;;
-  omo) target="$pdir/config/oh-my-openagent.json" ;;
+  omo) target="$(ocp_omo_config_file)" ;;
   env) target="$(ocp_env_file "$name")" ;;
   data) target="$pdir/data/opencode" ;;
   *) ocp_die "Unknown --what target: $what" ;;

@@ -42,6 +42,7 @@ fi
 ocp_write_manifest "$name" "${args[--description]:-}" "${args[--wrapper]:-}" ""
 
 ocp_success "Created profile '$name' at $pdir"
+ocp_omo_check_profile "$name"
 if [ -z "$seeded_auth" ]; then
   ocp_info "Next: run 'ocp launch -p $name -- auth login' to authenticate this profile."
 fi

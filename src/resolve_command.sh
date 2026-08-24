@@ -20,6 +20,16 @@ printf 'profile : %s\n' "$(green_bold "$p")"
 printf 'source  : %s\n' "$(cyan "$src")"
 printf 'config  : %s\n' "$(ocp_config_dir "$p")"
 printf 'data    : %s\n' "$(ocp_data_dir "$p")"
+
+omo_file="$(ocp_omo_config_file)"
+if [ ! -f "$omo_file" ]; then
+  printf 'omo     : %s %s\n' "$omo_file" "$(yellow "(not found)")"
+elif ocp_omo_has_profile "$p"; then
+  printf 'omo     : %s %s\n' "$omo_file" "$(cyan "[profiles.$p]")"
+else
+  printf 'omo     : %s %s\n' "$omo_file" "$(yellow "(no profiles.$p -- falls back to base)")"
+fi
+
 if ! ocp_profile_exists "$p"; then
   ocp_warn "profile '$p' is selected but does not exist (create it with: ocp create $p)"
 fi

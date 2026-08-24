@@ -7,6 +7,8 @@ environment_variables:
   help: "Root dir for ocp data (default: ~/.config/ocp)"
 - name: OCP_PROFILE
   help: Force a profile, overriding .ocprofile and the active default
+- name: OMO_PROFILE
+  help: "Selects the ~/.omo/omo.jsonc section (default: the resolved profile name)"
 
 commands:
 - name: create
