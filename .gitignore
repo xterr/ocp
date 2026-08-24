@@ -2,6 +2,7 @@
 .idea/
 .ocprofile
 .DS_Store
+.tmp/
 
 # node / yarn (berry, node-modules linker)
 node_modules/
